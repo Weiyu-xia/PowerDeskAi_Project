@@ -7,12 +7,15 @@ def Call_Dawatt(user_input):
     headers = {"Content-type": "application/json"}
     url = "http://192.168.210.128:1030/v1/chat/completions"
 
+    # 提示词：请求模型将对话生成一个简明的工单摘要
+    prompt = f"请根据以下对话生成一个工单摘要：\n\n{user_input}\n\n要求总结为简洁的工单任务描述。"
+
     params = {
         "model": "Megawatt_13b",
         "messages": [
             {
                 "role": "user",
-                "content": user_input
+                "content": prompt
             }
         ],
         "max_tokens": 2048,

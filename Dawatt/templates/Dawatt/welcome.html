@@ -11,7 +11,7 @@
     <form method="post">
         {% csrf_token %}
         <label for="user_input">输入:</label>
-        <input type="text" id="user_input" name="user_input" value="{{ user_input|default:'' }}" required>
+        <textarea id="user_input" name="user_input" required>{{ user_input|default:'' }}</textarea>
         <button type="submit">提交</button>
     </form>
     
