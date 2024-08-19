@@ -1,6 +1,23 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大瓦特接口</title>
+</head>
 <body>
+    <h1>大瓦特接口测试</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <label for="user_input">输入:</label>
+        <input type="text" id="user_input" name="user_input" value="{{ user_input|default:'' }}" required>
+        <button type="submit">提交</button>
+    </form>
+    
+    {% if reply %}
+    <h2>生成的结果:</h2>
     <p>{{ reply }}</p>
+    {% endif %}
 </body>
 </html>
