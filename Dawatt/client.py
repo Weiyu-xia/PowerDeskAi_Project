@@ -29,6 +29,7 @@ def Call_Dawatt(user_input):
             words += "".join(token_list)
 
     print("generate result: {}".format(words))
+    return words
 
 
 Call_Dawatt("介绍一下南方电网")
