@@ -17,7 +17,7 @@
     
     {% if reply %}
     <h2>生成的结果:</h2>
-    <p>{{ reply }}</p>
+    <h5>{{ reply|safe }}</h5>
     {% endif %}
 </body>
 </html>
