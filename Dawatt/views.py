@@ -1,18 +1,22 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from Dawatt.client import Call_Dawatt
-
-
+from django.views.generic import View
+from django.http import JsonResponse
+import json
 class DawattView(TemplateView):
     template_name = 'Dawatt/welcome.html'
 
-    # 从表单获取用户的输入
     def post(self, request, *args, **kwargs):
-        user_input = request.POST.get('user_input', '')
-        reply = Call_Dawatt(user_input)
-        context = self.get_context_data(reply=reply, user_input=user_input)
-        return self.render_to_response(context)
+        # 解析 JSON 请求体
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
+        user_input = body_data.get('user_input', '')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        reply = Call_Dawatt(user_input)
+        return JsonResponse({'reply': reply})
+
+
+# 处理 GET 请求的视图
+def load_chat_page(request):
+    return render(request, 'Dawatt/welcome.html')
