@@ -50,20 +50,27 @@ function displayReply(reply) {
 
 // 添加消息到聊天框
 function appendMessage(sender, message) {
-    // 使用颜色类区分用户与大瓦特的聊天框
+    // 根据 sender 确定背景颜色、文字颜色和头像路径
     const messageClass = sender === '用户'
-        ? 'bg-primary text-white'
-        : 'bg-light text-dark';
+        ? 'bg-light text-dark'
+        : 'bg-primary text-white';
+
+    const avatarSrc = sender === '用户'
+        ? '/static/images/User.png'  // 用户头像
+        : '/static/images/AI.png';  // 大瓦特头像
 
     const messageHtml = `
-        <div class="d-flex ${sender === '用户' ? 'justify-content-end' : 'justify-content-start'} mb-2">
+        <div class="d-flex ${sender === '用户' ? 'justify-content-end' : 'justify-content-start'} mb-2 align-items-center">
+            ${sender === '用户' ? '' : `<img src="${avatarSrc}" alt="${sender} Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">`}
             <div>
                 <strong>${sender}:</strong>
-                <div class="reply-content p-2 rounded ${messageClass}" style="max-width: 500px;">${message}</div>
+                <div class="reply-content p-2 rounded ${messageClass}" style="max-width: 400px;">${message}</div>
             </div>
+            ${sender === '用户' ? `<img src="${avatarSrc}" alt="${sender} Avatar" class="rounded-circle ms-2" style="width: 40px; height: 40px;">` : ''}
         </div>
     `;
     chatBox.insertAdjacentHTML('beforeend', messageHtml);
     chatBox.scrollTop = chatBox.scrollHeight; // 滚动到聊天框底部
 }
+
 
