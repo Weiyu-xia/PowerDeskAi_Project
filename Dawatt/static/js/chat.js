@@ -1,61 +1,69 @@
 // 获取表单和聊天框元素
-        const form = document.getElementById('chat-form');
-        const chatBox = document.getElementById('chat-box');
+const form = document.getElementById('chat-form');
+const chatBox = document.getElementById('chat-box');
 
-        // 表单提交事件处理
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // 阻止默认表单提交行为
+// 表单提交事件处理
+form.addEventListener('submit', function(event) {
+    event.preventDefault(); // 阻止默认表单提交行为
 
-            const userInput = document.getElementById('user_input').value;
-            if (userInput.trim() === '') return; // 确保用户输入不为空
+    const userInput = document.getElementById('user_input').value.trim();
+    if (!userInput) return; // 确保用户输入不为空
 
-            // 将用户输入添加到聊天框
-            chatBox.innerHTML += `<div><strong>用户:</strong></div>`;
-            chatBox.innerHTML += `<div>${userInput}</div>`;
+    // 将用户输入添加到聊天框
+    appendMessage('用户', userInput);
 
-            // 清空用户输入框
-            document.getElementById('user_input').value = '';
+    // 清空用户输入框
+    document.getElementById('user_input').value = '';
 
-            // 发送用户输入到服务器，调用 Call_Dawatt 方法
-            fetch('/api/chat/', { // 根路径
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: JSON.stringify({ user_input: userInput })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const reply = data.reply; // 根据 JSON 响应字段调整
-                // 将模型回复逐字显示
-                displayReply(reply);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
+    // 发送用户输入到服务器
+    fetch('/api/chat/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ user_input: userInput })
+    })
+    .then(response => response.json())
+    .then(data => displayReply(data.reply))
+    .catch(error => console.error('Error:', error));
+});
 
-        // 逐字显示函数
-        function displayReply(reply) {
-            const delay = 50; // 延迟时间，单位是毫秒
-            let index = 0;
-            chatBox.innerHTML += `<div><strong>大瓦特:</strong></div>`;
-            const replyDiv = document.createElement('div');
-            replyDiv.className = 'reply-content';
-            chatBox.appendChild(replyDiv);
+// 逐字显示函数
+function displayReply(reply) {
+    const delay = 50; // 延迟时间，单位是毫秒
+    appendMessage('大瓦特', '');
 
-            // 替换 <br> 为换行符
-            reply = reply.replace(/<br>/g, "\n");
+    const replyDiv = chatBox.lastElementChild.querySelector('.reply-content');
+    reply = reply.replace(/<br>/g, "\n");
 
-            function type() {
-                if (index < reply.length) {
-                    replyDiv.innerHTML += reply.charAt(index);
-                    index++;
-                    setTimeout(type, delay);
-                } else {
-                    chatBox.scrollTop = chatBox.scrollHeight; // 滚动到聊天框底部
-                }
-            }
-            type(); // 启动逐字显示
+    let index = 0;
+    (function type() {
+        if (index < reply.length) {
+            replyDiv.textContent += reply.charAt(index++);
+            setTimeout(type, delay);
+        } else {
+            chatBox.scrollTop = chatBox.scrollHeight; // 滚动到聊天框底部
         }
+    })();
+}
+
+// 添加消息到聊天框
+function appendMessage(sender, message) {
+    // 使用颜色类区分用户与大瓦特的聊天框
+    const messageClass = sender === '用户'
+        ? 'bg-primary text-white'
+        : 'bg-light text-dark';
+
+    const messageHtml = `
+        <div class="d-flex ${sender === '用户' ? 'justify-content-end' : 'justify-content-start'} mb-2">
+            <div>
+                <strong>${sender}:</strong>
+                <div class="reply-content p-2 rounded ${messageClass}" style="max-width: 500px;">${message}</div>
+            </div>
+        </div>
+    `;
+    chatBox.insertAdjacentHTML('beforeend', messageHtml);
+    chatBox.scrollTop = chatBox.scrollHeight; // 滚动到聊天框底部
+}
+
