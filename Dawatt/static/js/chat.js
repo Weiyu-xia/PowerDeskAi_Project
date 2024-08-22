@@ -60,7 +60,7 @@ function appendMessage(sender, message) {
         : '/static/images/AI.png';  // 大瓦特头像
 
     const messageHtml = `
-        <div class="d-flex ${sender === '用户' ? 'justify-content-end' : 'justify-content-start'} mb-2 align-items-center">
+        <div class="d-flex ${sender === '用户' ? 'justify-content-end' : 'justify-content-start'} mb-2 align-items-start">
             ${sender === '用户' ? '' : `<img src="${avatarSrc}" alt="${sender} Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">`}
             <div>
                 <strong>${sender}:</strong>
