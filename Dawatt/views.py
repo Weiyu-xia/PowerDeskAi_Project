@@ -11,9 +11,12 @@ class DawattView(TemplateView):
         # 解析 JSON 请求体
         body_unicode = request.body.decode('utf-8')
         body_data = json.loads(body_unicode)
-        user_input = body_data.get('user_input', '')
+        chat_history = body_data.get('chat_history', [])
 
-        reply = Call_Dawatt(user_input)
+        # 生成大模型的回复
+        reply = Call_Dawatt(chat_history)
+
+        # 返回 JSON 响应
         return JsonResponse({'reply': reply})
 
 
