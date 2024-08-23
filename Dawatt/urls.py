@@ -1,7 +1,10 @@
 from django.urls import path
-from .views import load_chat_page
+from .views import LoginPage
 from . import views as Dawatt_views
 urlpatterns = [
-    path('', load_chat_page, name='chat_page'),  # 处理 GET 请求
-    path('api/chat/', Dawatt_views.DawattView.as_view(), name='DawattView'),  # 处理 POST 请求
+    # 登录界面
+    path('', LoginPage.as_view(), name='login_page'),
+
+    # 大瓦特智能客服界面
+    path('DawattChat/', Dawatt_views.DawattView.as_view(), name='DawattChat'),
 ]

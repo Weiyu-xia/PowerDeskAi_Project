@@ -22,3 +22,15 @@ def Call_Dawatt(chat_history):
             token_list = re.findall(r'"content":"(.*?)"', chunk_str, re.DOTALL)
             words += "".join(token_list)
     return words
+
+
+def Print_Dawatt(chat_history):
+    # 将聊天记录转换为格式化字符串
+    formatted_history = ""
+    for message in chat_history:
+        role = '用户' if message['role'] == 'user' else '大瓦特'
+        content = message['content']
+        formatted_history += f"{role}: {content}；"
+
+    # 输出格式化的聊天记录到控制台
+    print('Formatted Chat History:', formatted_history)

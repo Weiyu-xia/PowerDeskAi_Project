@@ -21,7 +21,7 @@ form.addEventListener('submit', function(event) {
     document.getElementById('user_input').value = '';
 
     // 发送用户输入和历史记录到服务器
-    fetch('/api/chat/', {
+    fetch('/DawattChat/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
