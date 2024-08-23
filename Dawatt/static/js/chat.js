@@ -44,12 +44,11 @@ function displayReply(reply) {
     appendMessage('大瓦特', '');
 
     const replyDiv = chatBox.lastElementChild.querySelector('.reply-content');
-    reply = reply.replace(/<br>/g, "\n");
 
     let index = 0;
     (function type() {
         if (index < reply.length) {
-            replyDiv.textContent += reply.charAt(index++);
+            replyDiv.innerHTML += reply.charAt(index++);
             setTimeout(type, delay);
         } else {
             chatBox.scrollTop = chatBox.scrollHeight; // 滚动到聊天框底部

@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 from django.views.generic import View
 from django.http import JsonResponse
 import json
+from django.utils.html import escape
 
 from .client import Call_Dawatt, Print_Dawatt
 
@@ -23,6 +24,8 @@ class DawattView(TemplateView):
         chat_history = body_data.get('chat_history', [])
 
         reply = Call_Dawatt(chat_history)
+        reply = escape(reply).replace('\n', '<br>')
+
         chat_history.append({'role': 'assistant', 'content': reply})  # 将大模型的回复添加到聊天记录
         Print_Dawatt(chat_history)
 
