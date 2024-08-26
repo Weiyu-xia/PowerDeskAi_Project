@@ -21,6 +21,9 @@ def Call_Dawatt(chat_history):
             chunk_str = chunk.decode('utf-8')  # 将字节对象转换为字符串
             token_list = re.findall(r'"content":"(.*?)"', chunk_str, re.DOTALL)
             words += "".join(token_list)
+
+    # 将 \n 替换为 <br>
+    words = words.replace("\\n", "<br>")
     return words
 
 
