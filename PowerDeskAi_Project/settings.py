@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'powerdeskai',
         'USER': 'root',
-        'PASSWORD': 'czx2002819',
+        'PASSWORD': 'xiaweiyu',
         'HOST': '',
         'PORT': '',
     }
