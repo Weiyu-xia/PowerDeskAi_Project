@@ -27,13 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-AUTHENTICATION_BACKENDS = (
-    'Dawatt.auth_backend.EmailBackend',  # 使用自定义的 EmailBackend
-    'django.contrib.auth.backends.ModelBackend',  # 保留默认的认证后端
-)
-
-
+# 使用Django内置登录方法
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'DawattChat'
 

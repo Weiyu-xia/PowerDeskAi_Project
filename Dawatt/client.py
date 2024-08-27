@@ -3,7 +3,7 @@ import requests
 
 
 def Call_Dawatt(chat_history):
-    url = "http://192.168.210.128:1030/v1/chat/completions"
+    url = "http://192.168.210.128:1060/v1/chat/completions"
     params = {
         "model": "Megawatt_13b",
         "messages": chat_history,

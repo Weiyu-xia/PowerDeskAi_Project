@@ -30,28 +30,28 @@
                 <form  method="post" action="">
                     {% csrf_token %}
 
-                  <div class="d-flex align-items-center mb-3 pb-1">
-                    <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
-                    <span class="h1 fw-bold mb-0">Logo</span>
-                  </div>
+{#                  <div class="d-flex align-items-center mb-3 pb-1">#}
+{#                    <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>#}
+{#                    <span class="h1 fw-bold mb-0">Logo</span>#}
+{#                  </div>#}
 
-                  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
+                  <h2 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">登录你的账户</h2>
 
                     {#用户输入登录邮箱#}
                   <div data-mdb-input-init class="form-outline mb-4">
-                    <label class="form-label" for="username">Username</label>
+                    <label class="form-label" for="username">用户名</label>
                     <input type="text" id="username" name="username" class="form-control form-control-lg" placeholder="Enter your username">
                   </div>
 
                     {#用户输入登录密码#}
                   <div data-mdb-input-init class="form-outline mb-4">
-                      <label class="form-label" for="password">Password</label>
+                      <label class="form-label" for="password">密码</label>
                       <input type="password" id="password" name="password" class="form-control form-control-lg" placeholder="Enter your password">
                   </div>
 
                     {#提交表单#}
                   <div class="pt-1 mb-4">
-                    <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                    <button class="btn btn-dark btn-lg btn-block" type="submit">登录</button>
                   </div>
 
                   <br><a class="small text-muted" href="#!">Forgot password?</a>
