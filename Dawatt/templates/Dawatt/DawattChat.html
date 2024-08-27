@@ -11,6 +11,12 @@
 
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100">
+
+    <!-- 注销按钮 -->
+        <form action="{% url 'logout' %}" method="get">
+            <button type="submit">Logout</button>
+        </form>
+
     <div class="container">
         <div id="chat-box" class="mb-3 border rounded p-3 overflow-auto" style="height: 440px;">
             <!-- 聊天记录将被插入到这里 -->
