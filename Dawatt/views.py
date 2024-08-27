@@ -9,6 +9,9 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+from django.views import View
 
 
 # 登录界面
@@ -38,6 +41,12 @@ class LoginPage(TemplateView):
                 return render(request, self.template_name)
         else:
             return render(request, self.template_name)
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('login')  # 重定向到登录页面
 
 
 # 大瓦特智能客服聊天界面
