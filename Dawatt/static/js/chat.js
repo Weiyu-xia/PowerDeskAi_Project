@@ -46,9 +46,53 @@ function displayReply(reply) {
     const replyDiv = chatBox.lastElementChild.querySelector('.reply-content');
 
     let index = 0;
-    (function type() {
+        (function type() {
         if (index < reply.length) {
-            replyDiv.innerHTML += reply.charAt(index++);
+            if (reply[index] === '<') {
+                // 处理 HTML 标签
+                const endIndex = reply.indexOf('>', index);
+                if (endIndex !== -1) {
+                    replyDiv.innerHTML += reply.substring(index, endIndex + 1);
+                    index = endIndex + 1;
+                }
+            } else if (reply[index] === '*' && reply[index + 1] === '*') {
+                // 处理 '**'，加粗
+                const endIndex = reply.indexOf('**', index + 2);
+                if (endIndex !== -1) {
+                    replyDiv.innerHTML += `<strong>${reply.substring(index + 2, endIndex)}</strong>`;
+                    index = endIndex + 2;
+                } else {
+                    // 如果没有找到结束的 '**'，直接插入剩余字符
+                    replyDiv.innerHTML += reply.substring(index);
+                    index = reply.length;
+                }
+            } else if (reply[index] === '_' && reply[index + 1] === '_') {
+                // 处理 '__'，下划线
+                const endIndex = reply.indexOf('__', index + 2);
+                if (endIndex !== -1) {
+                    replyDiv.innerHTML += `<u>${reply.substring(index + 2, endIndex)}</u>`;
+                    index = endIndex + 2;
+                } else {
+                    // 如果没有找到结束的 '__'，直接插入剩余字符
+                    replyDiv.innerHTML += reply.substring(index);
+                    index = reply.length;
+                }
+            } else if (reply[index] === '`' && reply[index + 1] === '`') {
+                // 处理 '``'，代码块
+                const endIndex = reply.indexOf('``', index + 2);
+                if (endIndex !== -1) {
+                    replyDiv.innerHTML += `<code>${reply.substring(index + 2, endIndex)}</code>`;
+                    index = endIndex + 2;
+                } else {
+                    // 如果没有找到结束的 '``'，直接插入剩余字符
+                    replyDiv.innerHTML += reply.substring(index);
+                    index = reply.length;
+                }
+            } else {
+                // 其他字符逐字插入
+                replyDiv.innerHTML += reply.charAt(index);
+                index++;
+            }
             setTimeout(type, delay);
         } else {
             chatBox.scrollTop = chatBox.scrollHeight; // 滚动到聊天框底部
@@ -79,6 +123,5 @@ function appendMessage(sender, message) {
     chatBox.insertAdjacentHTML('beforeend', messageHtml);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 
 
