@@ -3,7 +3,7 @@ import requests
 
 
 def Call_Dawatt(chat_history):
-    url = "http://192.168.210.128:1030/v1/chat/completions"
+    url = "http://192.168.210.128:1060/v1/chat/completions"
     params = {
         "model": "Megawatt_13b",
         "messages": chat_history,
@@ -13,12 +13,19 @@ def Call_Dawatt(chat_history):
         "stream": True
     }
     headers = {"Content-Type": "application/json"}
-    response = requests.post(url=url, json=params, headers=headers)
-
+    response = requests.post(url=url, json=params, stream=True, headers=headers)
     words = ""
-    for chunk in response.iter_lines():
+    for chunk in response.iter_content(1024):
+        chunk = chunk.decode('utf-8', 'ignore')
         if chunk:
-            chunk_str = chunk.decode('utf-8')  # 将字节对象转换为字符串
-            token_list = re.findall(r'"content":"(.*?)"', chunk_str, re.DOTALL)
-            words += "".join(token_list)
-    return words
+            token_list = re.findall(r'"content":"(.*?)"', chunk, re.DOTALL)
+            content = "".join(token_list)
+            content = content.replace("\\n", "<br>")
+            print(content, end="")  # 实时打印输出
+            yield f"{content}"  # 流式输出到前端
+    #         words += "".join(token_list)
+    #
+    # # 将 \n 替换为 <br>
+    # words = words.replace("\\n", "<br>")
+    # return words
+

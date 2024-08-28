@@ -27,9 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# 使用Django内置登录方法
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'DawattChat'
+
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -80,8 +83,12 @@ WSGI_APPLICATION = 'PowerDeskAi_Project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'powerdeskai',
+        'USER': 'czx',
+        'PASSWORD': 'Czx2002819',
+        'HOST': 'rm-bp1f61t2qtcqsc94tdo.mysql.rds.aliyuncs.com',
+        'PORT': '3306',
     }
 }
 
