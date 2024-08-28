@@ -1,16 +1,12 @@
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
 import json
-from django.utils.html import escape
-from .client import Call_Dawatt, Print_Dawatt
+from .client import Call_Dawatt
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.shortcuts import redirect
 from django.views import View
 
 
@@ -59,10 +55,6 @@ class DawattView(LoginRequiredMixin, TemplateView):
         body_data = json.loads(body_unicode)
         chat_history = body_data.get('chat_history', [])
 
-        reply = Call_Dawatt(chat_history)
-
-        chat_history.append({'role': 'assistant', 'content': reply})  # 将大模型的回复添加到聊天记录
-        Print_Dawatt(chat_history)
-
-        # 返回 JSON 响应，包括生成的回复和格式化的聊天记录
-        return JsonResponse({'reply': reply})
+        response = StreamingHttpResponse(Call_Dawatt(chat_history), content_type='text/event-stream')
+        response['Cache-Control'] = 'no-cache'
+        return response
