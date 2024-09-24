@@ -7,16 +7,12 @@ let chatHistory = [];
 // 表单提交事件处理
 form.addEventListener('submit', function(event) {
     event.preventDefault();
-
     const userInput = document.getElementById('user_input').value.trim();
     if (!userInput) return;
-
     // 将用户输入添加到聊天记录
     chatHistory.push({ role: 'user', content: userInput });
-
     // 将用户输入添加到聊天框
     appendMessage('用户', userInput);
-
     // 清空用户输入框
     document.getElementById('user_input').value = '';
 
@@ -61,6 +57,26 @@ form.addEventListener('submit', function(event) {
         readStream();
     })
     .catch(error => console.error('Error:', error));
+
+
+    // 第二个请求：获取情绪识别结果
+    fetch('/DawattChat/emotion/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ chat_history: chatHistory })
+    })
+    .then(response => response.json())  // 解析JSON响应
+    .then(data => {
+        console.log("情绪识别返回数据: ", data);
+        // 更新情绪识别结果显示区域
+        const emotionDiv = document.getElementById('emotion-label');
+        emotionDiv.innerHTML = `情绪识别结果：${data.emotion_label}`;
+    })
+    .catch(error => console.error('Error:', error));
+
 });
 
 // 解析并转换Markdown标记

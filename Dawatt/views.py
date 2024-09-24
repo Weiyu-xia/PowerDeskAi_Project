@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.views import View
+import requests
 
 
 # 登录界面
@@ -58,3 +59,33 @@ class DawattView(LoginRequiredMixin, TemplateView):
         response = StreamingHttpResponse(Call_Dawatt(chat_history), content_type='text/event-stream')
         response['Cache-Control'] = 'no-cache'
         return response
+
+
+# 添加一个新的视图来处理情绪识别
+def emotion_analysis(request):
+    """
+    处理情绪识别API调用并返回情绪标签。
+    """
+    body_unicode = request.body.decode('utf-8')
+    body_data = json.loads(body_unicode)
+    chat_history = body_data.get('chat_history', [])
+
+    # 获取用户输入的最后一句话
+    user_last_sentence = chat_history[-1]['content'] if chat_history else ""
+
+    # 调用情绪识别API
+    api_url = "http://127.0.0.1:5000/api/emotion"  # 假设情绪识别API在这个端口
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    body = {"text": user_last_sentence}
+
+    try:
+        # 调用情绪识别API并获取结果
+        emotion_response = requests.post(api_url, json=body, headers=headers)
+        emotion_data = emotion_response.json()
+        emotion_label = emotion_data.get('emotion_label', "未知")
+
+        # 返回情绪识别结果
+        return JsonResponse({'emotion_label': emotion_label})
+
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'error': str(e)})
