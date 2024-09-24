@@ -16,7 +16,7 @@ form.addEventListener('submit', function(event) {
     // 清空用户输入框
     document.getElementById('user_input').value = '';
 
-    // 发送用户输入和历史记录到服务器并流式接收大模型的输出
+    // 获取大瓦特的对话内容（流式传输）
     fetch('/DawattChat/', {
         method: 'POST',
         headers: {
@@ -25,14 +25,38 @@ form.addEventListener('submit', function(event) {
         },
         body: JSON.stringify({ chat_history: chatHistory })
     })
-    .then(response => {if (!response.ok) {throw new Error('Network response was not ok');}
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let partialData = '';
 
         // 逐字显示大模型的回复
         appendMessage('大瓦特', '');
 
+        const replyDiv = chatBox.lastElementChild.querySelector('.reply-content');
+
+        function readStream() {
+            reader.read().then(({ done, value }) => {
+                if (done) {
+                    chatHistory.push({ role: 'assistant', content: partialData });
+                    return;
+                }
+
+                // 处理流式传输的数据
+                partialData += decoder.decode(value, { stream: true });
+                replyDiv.innerHTML = parseMarkdown(partialData);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                readStream();
+            }).catch(error => console.error('Error:', error));
+        }
+
+        readStream();
     })
     .catch(error => console.error('Error:', error));
-
 
     // 第二个请求：获取情绪识别结果
     fetch('/DawattChat/emotion/', {
@@ -45,7 +69,6 @@ form.addEventListener('submit', function(event) {
     })
     .then(response => response.json())  // 解析JSON响应
     .then(data => {
-        console.log("情绪识别返回数据: ", data);
         // 更新情绪识别结果显示区域
         const emotionDiv = document.getElementById('emotion-label');
         emotionDiv.innerHTML = `情绪识别结果：${data.emotion_label}`;
@@ -53,6 +76,16 @@ form.addEventListener('submit', function(event) {
     .catch(error => console.error('Error:', error));
 
 });
+
+// 解析并转换Markdown标记
+function parseMarkdown(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // 加粗
+        .replace(/__(.*?)__/g, '<u>$1</u>')               // 下划线
+        .replace(/``(.*?)``/g, '<code>$1</code>')         // 代码块
+        .replace(/\n/g, '<br>');                          // 换行
+}
+
 
 // 添加消息到聊天框
 function appendMessage(sender, message) {
