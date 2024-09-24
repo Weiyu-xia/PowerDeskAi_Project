@@ -25,36 +25,11 @@ form.addEventListener('submit', function(event) {
         },
         body: JSON.stringify({ chat_history: chatHistory })
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let partialData = '';
+    .then(response => {if (!response.ok) {throw new Error('Network response was not ok');}
 
         // 逐字显示大模型的回复
         appendMessage('大瓦特', '');
 
-        const replyDiv = chatBox.lastElementChild.querySelector('.reply-content');
-
-        function readStream() {
-            reader.read().then(({ done, value }) => {
-                if (done) {
-                    chatHistory.push({ role: 'assistant', content: partialData });
-                    return;
-                }
-
-                // 处理流式传输的数据
-                partialData += decoder.decode(value, { stream: true });
-                replyDiv.innerHTML = parseMarkdown(partialData);
-                chatBox.scrollTop = chatBox.scrollHeight;
-
-                readStream();
-            }).catch(error => console.error('Error:', error));
-        }
-
-        readStream();
     })
     .catch(error => console.error('Error:', error));
 
@@ -78,15 +53,6 @@ form.addEventListener('submit', function(event) {
     .catch(error => console.error('Error:', error));
 
 });
-
-// 解析并转换Markdown标记
-function parseMarkdown(text) {
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // 加粗
-        .replace(/__(.*?)__/g, '<u>$1</u>')               // 下划线
-        .replace(/``(.*?)``/g, '<code>$1</code>')         // 代码块
-        .replace(/\n/g, '<br>');                          // 换行
-}
 
 // 添加消息到聊天框
 function appendMessage(sender, message) {
