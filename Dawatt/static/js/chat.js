@@ -69,9 +69,22 @@ form.addEventListener('submit', function(event) {
     })
     .then(response => response.json())  // 解析JSON响应
     .then(data => {
+         console.log("情绪识别返回数据: ", data);  // 调试输出
+        // 获取情绪识别结果
+        let emotionLabel = data.emotion_label;
+
+        // 判断情绪结果，并设置页面显示的情绪
+        let emotionText = '';
+        if (emotionLabel === 1) {
+            emotionText = '正面';
+        } else if (emotionLabel === 0) {
+            emotionText = '负面';
+        } else {
+            emotionText = '平静';  // 处理其他未知情绪标签
+        }
         // 更新情绪识别结果显示区域
         const emotionDiv = document.getElementById('emotion-label');
-        emotionDiv.innerHTML = `情绪识别结果：${data.emotion_label}`;
+        emotionDiv.innerHTML = `情绪识别结果：${emotionText}`;
     })
     .catch(error => console.error('Error:', error));
 
