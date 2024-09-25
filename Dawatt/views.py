@@ -55,6 +55,7 @@ class DawattView(LoginRequiredMixin, TemplateView):
         body_unicode = request.body.decode('utf-8')
         body_data = json.loads(body_unicode)
         chat_history = body_data.get('chat_history', [])
+        print(chat_history)
 
         response = StreamingHttpResponse(Call_Dawatt(chat_history), content_type='text/event-stream')
         response['Cache-Control'] = 'no-cache'

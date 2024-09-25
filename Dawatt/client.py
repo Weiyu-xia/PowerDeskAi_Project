@@ -29,7 +29,7 @@ def Call_Dawatt(chat_history):  # 添加一个 delay 参数，单位为秒
 
     # 检查响应状态
     if response.status_code == 200:
-        print("请求成功，开始处理流式返回数据...")  # 调试信息
+        # print("请求成功，开始处理流式返回数据...")  # 调试信息
         # 处理流式返回数据
         for line in response.iter_lines():
             if line:
