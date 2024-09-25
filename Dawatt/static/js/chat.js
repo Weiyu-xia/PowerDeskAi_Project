@@ -123,3 +123,37 @@ function appendMessage(sender, message) {
     chatBox.insertAdjacentHTML('beforeend', messageHtml);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+
+
+//优化界面
+document.addEventListener('DOMContentLoaded', function () {
+    const chatBox = document.getElementById('chat-box');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user_input');
+
+    // 处理表单提交
+    chatForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const userMessage = userInput.value.trim();
+
+        if (userMessage) {
+            appendMessage('用户', userMessage);
+            userInput.value = ''; // 清空输入框
+            // 模拟响应
+            setTimeout(function () {
+                appendMessage('客服', '收到您的消息！');
+            }, 1000);
+        }
+    });
+
+    // 添加消息到聊天框
+    function appendMessage(sender, message) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('border', 'rounded', 'p-2', 'mb-2');
+        messageElement.innerHTML = `<strong>${sender}：</strong> ${message}`;
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight; // 保持滚动条在底部
+    }
+});
+
