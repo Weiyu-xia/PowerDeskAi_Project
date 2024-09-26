@@ -54,10 +54,10 @@ class DawattView(LoginRequiredMixin, TemplateView):
         # 将获取的json转化为字典形式
         body_unicode = request.body.decode('utf-8')
         body_data = json.loads(body_unicode)
-        chat_history = body_data.get('chat_history', [])
-        print(chat_history)
+        user_input = body_data.get('user_input', '')  # 获取用户输入
+        print(user_input)
 
-        response = StreamingHttpResponse(Call_Dawatt(chat_history), content_type='text/event-stream')
+        response = StreamingHttpResponse(Call_Dawatt(user_input), content_type='text/event-stream')
         response['Cache-Control'] = 'no-cache'
         return response
 

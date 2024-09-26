@@ -23,7 +23,7 @@ form.addEventListener('submit', function(event) {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-        body: JSON.stringify({ chat_history: chatHistory })
+        body: JSON.stringify({ user_input: userInput })
     })
     .then(response => {
         if (!response.ok) {
