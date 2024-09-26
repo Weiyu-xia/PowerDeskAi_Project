@@ -7,7 +7,7 @@ def Call_Dawatt(chat_history):  # 添加一个 delay 参数，单位为秒
     api_url = "https://api.dify.ai/v1/chat-messages"  # 目标 API 地址
 
     # API Key
-    api_key = "app-mg9yf6ZAwpdC6qotdtZlaDd3"
+    api_key = "app-UbvRHc53mtaKn740Ht5SU9aD"
 
     # 设置请求头
     headers = {
