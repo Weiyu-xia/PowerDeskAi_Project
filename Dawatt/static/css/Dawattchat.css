@@ -54,3 +54,23 @@ button.btn-outline-danger:hover {
     background-color: #dc3545;
     color: #ffffff;
 }
+
+/* 侧边栏 */
+.bg-dark {
+    background-color: #343a40 !important;
+}
+
+#conversation-list {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#new-conversation {
+    border-radius: 50px;
+    font-weight: bold;
+}
+
+#new-conversation:hover {
+    background-color: #28a745;
+    color: #ffffff;
+}
