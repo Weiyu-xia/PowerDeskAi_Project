@@ -10,39 +10,53 @@
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100 bg-light">
-
-    <!-- 注销按钮 -->
-    <form action="{% url 'logout' %}" method="get" class="position-absolute top-0 end-0 m-3">
-        <button type="submit" class="btn btn-outline-danger">Logout</button>
-    </form>
-
-    <div class="container p-4 shadow-sm rounded bg-white">
-        <!-- 用于显示情绪识别结果 -->
-        <div id="emotion-label" class="mb-3 border rounded p-3 d-flex align-items-center justify-content-center" style="height: 60px;">
-            <span class="text-muted">情绪识别结果：<strong class="text-danger">未知</strong></span>
+    <!-- 整体容器 -->
+    <div class="container-fluid vh-100 d-flex flex-row p-0">
+        <!-- 侧边栏 -->
+        <div class="col-3 bg-dark text-white d-flex flex-column align-items-start p-3">
+            <h3 class="text-center w-100 mb-4">对话历史</h3>
+            <ul id="conversation-list" class="list-group w-100">
+                <!-- 每个对话链接将被插入这里 -->
+            </ul>
+            <button id="new-conversation" class="btn btn-outline-success w-100 mt-auto">新会话</button>
         </div>
 
-        <!-- 聊天记录框 -->
-        <div id="chat-box" class="mb-3 border rounded p-3 overflow-auto" style="height: 440px;">
-            <!-- 聊天记录将被插入到这里 -->
-        </div>
+        <!-- 主聊天区域 -->
+        <div class="col-9 d-flex flex-column p-3">
+            <!-- 注销按钮 -->
+            <form action="{% url 'logout' %}" method="get" class="position-absolute top-0 end-0 m-3">
+                <button type="submit" class="btn btn-outline-danger">Logout</button>
+            </form>
 
-         <!-- 常见问题按钮组 -->
-        <div class="mb-3 d-flex flex-wrap justify-content-start gap-2">
-            <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>
-            <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>
-            <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>
-            <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>
-        </div>
+            <div class="container p-4 shadow-sm rounded bg-white">
+                <!-- 用于显示情绪识别结果 -->
+                <div id="emotion-label" class="mb-3 border rounded p-3 d-flex align-items-center justify-content-center" style="height: 60px;">
+                    <span class="text-muted">情绪识别结果：<strong class="text-danger">未知</strong></span>
+                </div>
 
-        <!-- 输入框和发送按钮 -->
-        <form id="chat-form" class="input-group">
-            {% csrf_token %}
-            <div class="input-group mb-3">
-                <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." aria-describedby="button-addon2" required>
-                <button class="btn btn-primary" type="submit">发送</button>
+                <!-- 聊天记录框 -->
+                <div id="chat-box" class="mb-3 border rounded p-3 overflow-auto" style="height: 440px;">
+                    <!-- 聊天记录将被插入到这里 -->
+                </div>
+
+                 <!-- 常见问题按钮组 -->
+                <div class="mb-3 d-flex flex-wrap justify-content-start gap-2">
+                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>
+                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>
+                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>
+                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>
+                </div>
+
+                <!-- 输入框和发送按钮 -->
+                <form id="chat-form" class="input-group">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." aria-describedby="button-addon2" required>
+                        <button class="btn btn-primary" type="submit">发送</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
     <script src="{% static 'js/chat.js' %}"></script>
