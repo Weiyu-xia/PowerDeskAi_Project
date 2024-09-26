@@ -156,3 +156,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
+
+// 等待文档加载完成后再执行
+document.addEventListener('DOMContentLoaded', function () {
+
+    // 获取所有常见问题按钮
+    const commonQuestionButtons = document.querySelectorAll('.common-question');
+    const userInput = document.getElementById('user_input');
+    const chatForm = document.getElementById('chat-form');
+
+    // 为每个按钮添加点击事件
+    commonQuestionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // 获取按钮上的问题内容
+            const question = this.getAttribute('data-value');
+            // 将内容填入输入框
+            userInput.value = question;
+        });
+    });
+
+});

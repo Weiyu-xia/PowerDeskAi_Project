@@ -27,6 +27,14 @@
             <!-- 聊天记录将被插入到这里 -->
         </div>
 
+         <!-- 常见问题按钮组 -->
+        <div class="mb-3 d-flex flex-wrap justify-content-start gap-2">
+            <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>
+            <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>
+            <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>
+            <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>
+        </div>
+
         <!-- 输入框和发送按钮 -->
         <form id="chat-form" class="input-group">
             {% csrf_token %}
