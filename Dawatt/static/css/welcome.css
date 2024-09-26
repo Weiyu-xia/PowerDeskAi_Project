@@ -1,56 +1,30 @@
-.box {
-    width: 100%;
-    height: 500px;
-    position: absolute;
-    top: 0;
-}
-
-.reply-content {
-    white-space: pre-wrap; /* 保持换行符和空格 */
-}
-
-#chat-box::-webkit-scrollbar {
-    display: none;
-}
-
+/*login界面css美化*/
 body {
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #e0e0ff, #99ccff);
 }
 
-#emotion-label {
-    background-color: #e9ecef;
-    font-size: 1.1rem;
-    text-align: center;
+/* 卡片的样式 */
+.card {
+    border-radius: 10px;
 }
 
-#chat-box {
-    background-color: #ffffff;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-    border-color: #ced4da;
+/* 卡片的阴影，让界面更有层次感 */
+.card.shadow-lg {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-input#user_input {
-    border-radius: 0;
+/* 标题样式，使用蓝色主题 */
+h3.text-primary {
+    color: #007bff;
 }
 
-button.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+/* 表单的输入框增加圆角 */
+.form-control {
+    border-radius: 8px;
 }
 
-button.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+/* 按钮使用圆角 */
+.btn {
+    border-radius: 8px;
 }
 
-button.btn-outline-danger {
-    border-radius: 50px;
-    padding: 0.5rem 1rem;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-button.btn-outline-danger:hover {
-    background-color: #dc3545;
-    color: #ffffff;
-}

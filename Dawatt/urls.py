@@ -6,6 +6,7 @@ urlpatterns = [
     path('login/', LoginPage.as_view(), name='login'),
 
     path('logout/', LogoutView.as_view(), name='logout'),
+
     # 大瓦特智能客服界面
     path('DawattChat/', Dawatt_views.DawattView.as_view(), name='DawattChat'),
     # 添加情绪识别的路由

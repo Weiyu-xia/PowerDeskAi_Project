@@ -99,7 +99,6 @@ function parseMarkdown(text) {
         .replace(/\n/g, '<br>');                          // 换行
 }
 
-
 // 添加消息到聊天框
 function appendMessage(sender, message) {
     const messageClass = sender === '用户'
