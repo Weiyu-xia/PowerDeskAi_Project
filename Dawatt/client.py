@@ -20,7 +20,7 @@ def Call_Dawatt(chat_history):  # 添加一个 delay 参数，单位为秒
         "inputs": {},  # 允许传入 App 定义的各变量值
         "query": chat_history,  # 用户提问内容
         "response_mode": "streaming",  # 使用流式模式
-        "conversation_id": "",  # （可选）会话 ID
+        "conversation_id": "8d9c8d3f-086d-4fe5-9452-11fe6e884275",  # （可选）会话 ID
         "user": "abc-123",  # 用户标识
     }
 
