@@ -3,28 +3,42 @@ body {
     background: linear-gradient(135deg, #e0e0ff, #99ccff);
 }
 
-/* 卡片的样式 */
-.card {
+/* 登录卡片的样式 */
+.login-card {
     border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
 }
 
-/* 卡片的阴影，让界面更有层次感 */
-.card.shadow-lg {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+/* 标题的样式 */
+.login-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #104E8B;
 }
 
-/* 标题样式，使用蓝色主题 */
-h3.text-primary {
-    color: #007bff;
-}
-
-/* 表单的输入框增加圆角 */
+/* 输入框的样式 */
 .form-control {
-    border-radius: 8px;
+    border-radius: 5px;
+    height: 50px;
 }
 
-/* 按钮使用圆角 */
-.btn {
-    border-radius: 8px;
+/* 按钮样式 */
+.btn-primary {
+    background-color: #104E8B;
+    border-color: #104E8B;
 }
 
+.btn-primary:hover {
+    background-color: #0e3e6b;
+    border-color: #0e3e6b;
+}
+
+/* 链接样式 */
+.text-muted a {
+    color: #104E8B;
+}
+
+.text-muted a:hover {
+    text-decoration: underline;
+}
