@@ -5,8 +5,17 @@ import time
 # 定义一个全局变量来存储 conversation_id
 conversation_id = None
 
+# 定义一个重置 conversation_id 的方法
+def reset_conversation_id():
+    global conversation_id
+    conversation_id = None
+    print("会话已重置为新的会话")
+
+
 def Call_Dawatt(user_input):
     global conversation_id  # 声明全局变量
+    if conversation_id is None:
+        print("新会话开始")
 
     # 定义 API URL
     api_url = "https://api.dify.ai/v1/chat-messages"  # 目标 API 地址

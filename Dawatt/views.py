@@ -1,6 +1,6 @@
 from django.http import JsonResponse, StreamingHttpResponse
 import json
-from .client import Call_Dawatt
+from .client import Call_Dawatt, reset_conversation_id
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
@@ -90,3 +90,9 @@ def emotion_analysis(request):
 
     except requests.exceptions.RequestException as e:
         return JsonResponse({'error': str(e)})
+
+
+# 新的视图函数用于重置 conversation_id
+def new_conversation(request):
+    reset_conversation_id()  # 调用重置方法
+    return JsonResponse({'message': 'conversation reset'})

@@ -4,6 +4,31 @@ const chatBox = document.getElementById('chat-box');
 
 let chatHistory = [];
 
+
+document.getElementById('new-conversation').addEventListener('click', function() {
+    // 发送一个请求到后端重置 conversation_id
+    fetch('/DawattChat/new-conversation/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('会话已重置');
+            // 清空聊天记录
+            document.getElementById('chat-box').innerHTML = '';
+        } else {
+            console.error('无法重置会话');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+
+
 // 表单提交事件处理
 form.addEventListener('submit', function(event) {
     event.preventDefault();
