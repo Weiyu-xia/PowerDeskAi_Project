@@ -1,6 +1,9 @@
 // 获取表单和聊天框元素
 const form = document.getElementById('chat-form');
 const chatBox = document.getElementById('chat-box');
+const welcomeScreen = document.getElementById('welcome-screen');  // 欢迎界面元素
+const chatScreen = document.getElementById('chat-screen');        // 聊天界面元素
+const newConversationButton = document.getElementById('new-conversation');
 
 let chatHistory = [];
 
@@ -186,7 +189,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-document.getElementById('new-conversation').addEventListener('click', function() {
+// 点击“新会话”按钮时
+newConversationButton.addEventListener('click', function() {
+    // 显示聊天界面，隐藏欢迎界面
+    welcomeScreen.classList.add('d-none');
+    chatScreen.classList.remove('d-none');
+
+    // 发送一个请求到后端重置 conversation_id
     fetch('/DawattChat/new-conversation/', {
         method: 'POST',
         headers: {
@@ -199,14 +208,17 @@ document.getElementById('new-conversation').addEventListener('click', function()
     .then(data => {
         if (data.message === '会话已重置') {
             console.log('会话已重置');
-            conversationID = data.conversation_id; // 存储新的会话 ID
+            window.currentConversationID = data.conversation_id; // 存储新的会话 ID
             chatHistory = []; // 清空聊天记录
-            document.getElementById('chat-box').innerHTML = '';
+            document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
+
             // 在侧边栏新增会话条目
             const newSessionItem = document.createElement('li');
             newSessionItem.classList.add('list-group-item', 'conversation-item');
             newSessionItem.innerHTML = `<i class="fas fa-comment-alt"></i> ${data.conversation_id}`;
             document.getElementById('conversation-list').appendChild(newSessionItem);
+        } else {
+            console.error('无法重置会话');
         }
     })
     .catch(error => console.error('Error:', error));
