@@ -1,6 +1,6 @@
 from django.http import JsonResponse, StreamingHttpResponse
 import json
-from .client import Call_Dawatt, reset_conversation_id
+from .client import Call_Dawatt, reset_conversation_id, generate_conversation_id
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView
@@ -55,11 +55,61 @@ class DawattView(LoginRequiredMixin, TemplateView):
         body_unicode = request.body.decode('utf-8')
         body_data = json.loads(body_unicode)
         user_input = body_data.get('user_input', '')  # 获取用户输入
+        conversation_id = body_data.get('conversation_id', None)  # 获取会话ID
         print(user_input)
 
-        response = StreamingHttpResponse(Call_Dawatt(user_input), content_type='text/event-stream')
+        response = StreamingHttpResponse(Call_Dawatt(user_input, conversation_id), content_type='text/event-stream')
         response['Cache-Control'] = 'no-cache'
         return response
+
+
+class MessageHistoryView(View):
+    """
+    处理根据 conversation_id 获取历史聊天记录的请求。
+    """
+    def get(self, request, *args, **kwargs):
+        # 从请求参数中获取必要的参数
+        conversation_id = request.GET.get('conversation_id', None)
+        user = request.GET.get('user', 'abc-123')  # 假设用户 ID 是 'abc-123'
+        first_id = request.GET.get('first_id', None)
+        limit = request.GET.get('limit', 20)
+
+        # 检查 conversation_id 是否存在
+        if not conversation_id:
+            return JsonResponse({'error': 'conversation_id is required'}, status=400)
+
+        # 构建 API 请求的 URL 和参数
+        api_url = "https://api.dify.ai/v1/messages"
+        headers = {
+            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Content-Type': 'application/json'
+        }
+
+        # 构建 API 请求的参数
+        params = {
+            'conversation_id': conversation_id,
+            'user': user,
+            'first_id': first_id,
+            'limit': limit
+        }
+
+        try:
+            # 向外部 API 发送 GET 请求获取聊天记录
+            response = requests.get(api_url, headers=headers, params=params)
+
+            # 如果请求成功，返回聊天记录数据
+            if response.status_code == 200:
+                data = response.json()  # 解析 JSON 响应
+                return JsonResponse(data)
+
+            # 请求失败的处理
+            else:
+                return JsonResponse({'error': 'Failed to fetch chat history', 'details': response.text}, status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            # 捕获请求异常并返回错误信息
+            return JsonResponse({'error': str(e)}, status=500)
+
 
 
 # 添加一个新的视图来处理情绪识别
@@ -94,5 +144,6 @@ def emotion_analysis(request):
 
 # 新的视图函数用于重置 conversation_id
 def new_conversation(request):
-    reset_conversation_id()  # 调用重置方法
-    return JsonResponse({'message': 'conversation reset'})
+    reset_conversation_id()  # 重置当前的会话 ID
+    new_conv_id = generate_conversation_id()  # 生成新的会话 ID
+    return JsonResponse({'message': '会话已重置', 'conversation_id': new_conv_id})

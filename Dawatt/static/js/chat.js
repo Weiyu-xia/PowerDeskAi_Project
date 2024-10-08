@@ -5,35 +5,14 @@ const chatBox = document.getElementById('chat-box');
 let chatHistory = [];
 
 
-document.getElementById('new-conversation').addEventListener('click', function() {
-    // 发送一个请求到后端重置 conversation_id
-    fetch('/DawattChat/new-conversation/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({})
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('会话已重置');
-            // 清空聊天记录
-            document.getElementById('chat-box').innerHTML = '';
-        } else {
-            console.error('无法重置会话');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-
-
 // 表单提交事件处理
 form.addEventListener('submit', function(event) {
     event.preventDefault();
     const userInput = document.getElementById('user_input').value.trim();
     if (!userInput) return;
+    // 确保使用当前的会话ID
+    const currentConvID = window.currentConversationID || null;  // 如果没有会话ID则传递 null
+
     // 将用户输入添加到聊天记录
     chatHistory.push({ role: 'user', content: userInput });
     // 将用户输入添加到聊天框
@@ -48,7 +27,10 @@ form.addEventListener('submit', function(event) {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-        body: JSON.stringify({ user_input: userInput })
+        body: JSON.stringify({
+            user_input: userInput,
+            conversation_id: currentConvID  // 发送当前会话ID
+        })
     })
     .then(response => {
         if (!response.ok) {
@@ -200,5 +182,61 @@ document.addEventListener('DOMContentLoaded', function () {
             userInput.value = question;
         });
     });
-
 });
+
+
+
+document.getElementById('new-conversation').addEventListener('click', function() {
+    fetch('/DawattChat/new-conversation/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === '会话已重置') {
+            console.log('会话已重置');
+            conversationID = data.conversation_id; // 存储新的会话 ID
+            chatHistory = []; // 清空聊天记录
+            document.getElementById('chat-box').innerHTML = '';
+            // 在侧边栏新增会话条目
+            const newSessionItem = document.createElement('li');
+            newSessionItem.classList.add('list-group-item', 'conversation-item');
+            newSessionItem.innerHTML = `<i class="fas fa-comment-alt"></i> ${data.conversation_id}`;
+            document.getElementById('conversation-list').appendChild(newSessionItem);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+
+// 点击会话列表项时获取聊天记录并切换会话 ID
+document.getElementById('conversation-list').addEventListener('click', function(e) {
+    if (e.target && e.target.matches('li.conversation-item')) {
+        let conversationID = e.target.textContent.trim();
+        window.currentConversationID = conversationID;  // 将会话ID存储为全局变量
+
+        fetch(`/messages/?conversation_id=${conversationID}&limit=20`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                } else {
+                    renderChatHistory(data.data);  // 渲染聊天历史
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+});
+
+function renderChatHistory(history) {
+    const chatBox = document.getElementById('chat-box');
+    chatBox.innerHTML = '';  // 清空聊天框
+    history.forEach(item => {
+        appendMessage(item.belongs_to === 'user' ? '用户' : '大瓦特', item.query || item.answer);
+    });
+}
+
