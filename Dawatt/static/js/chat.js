@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 添加消息到聊天框
+    // 添加消息到聊天框1
     function appendMessage(sender, message) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('border', 'rounded', 'p-2', 'mb-2');
@@ -231,7 +231,7 @@ document.getElementById('conversation-list').addEventListener('click', function(
         let conversationID = e.target.textContent.trim();
         window.currentConversationID = conversationID;  // 将会话ID存储为全局变量
 
-        fetch(`/messages/?conversation_id=${conversationID}&limit=20`)
+        fetch(`/messages/?conversation_id=${conversationID}&user=abc-123&limit=20`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
@@ -248,7 +248,37 @@ function renderChatHistory(history) {
     const chatBox = document.getElementById('chat-box');
     chatBox.innerHTML = '';  // 清空聊天框
     history.forEach(item => {
-        appendMessage(item.belongs_to === 'user' ? '用户' : '大瓦特', item.query || item.answer);
+        // 显示用户的 query
+        appendMessage('用户', item.query);
+
+        // 显示 AI 的 answer，如果存在的话
+        if (item.answer) {
+            appendMessage('大瓦特', item.answer);
+        }
     });
+}
+
+// 添加消息到聊天框2
+function appendMessage(sender, message) {
+    const messageClass = sender === '用户'
+        ? 'bg-light text-dark'
+        : 'bg-primary text-white';
+
+    const avatarSrc = sender === '用户'
+        ? '/static/images/User.png'
+        : '/static/images/AI.png';
+
+    const messageHtml = `
+        <div class="d-flex ${sender === '用户' ? 'justify-content-end' : 'justify-content-start'} mb-2 align-items-start">
+            ${sender === '用户' ? '' : `<img src="${avatarSrc}" alt="${sender} Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px;">`}
+            <div>
+                <strong>${sender}:</strong>
+                <div class="reply-content p-2 rounded ${messageClass}" style="max-width: 400px;">${message}</div>
+            </div>
+            ${sender === '用户' ? `<img src="${avatarSrc}" alt="${sender} Avatar" class="rounded-circle ms-2" style="width: 40px; height: 40px;">` : ''}
+        </div>
+    `;
+    chatBox.insertAdjacentHTML('beforeend', messageHtml);
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
