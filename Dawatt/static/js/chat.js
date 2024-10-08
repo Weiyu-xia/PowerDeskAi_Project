@@ -1,11 +1,18 @@
 // 获取表单和聊天框元素
 const form = document.getElementById('chat-form');
 const chatBox = document.getElementById('chat-box');
+const welcomeScreen = document.getElementById('welcome-screen');
+const chatScreen = document.getElementById('chat-screen');
+const newConversationButton = document.getElementById('new-conversation');
 
 let chatHistory = [];
 
+// 点击“新会话”按钮时
+newConversationButton.addEventListener('click', function() {
+    // 显示聊天界面，隐藏欢迎界面
+    welcomeScreen.classList.add('d-none');
+    chatScreen.classList.remove('d-none');
 
-document.getElementById('new-conversation').addEventListener('click', function() {
     // 发送一个请求到后端重置 conversation_id
     fetch('/DawattChat/new-conversation/', {
         method: 'POST',
