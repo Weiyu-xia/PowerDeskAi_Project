@@ -360,11 +360,74 @@ function appendConversationToList(conversationID, conversationName) {
 
     // 使用 data-id 存储会话的唯一 ID
     const li = document.createElement('li');
-    li.classList.add('conversation-item');
+    li.classList.add('conversation-item', 'd-flex', 'justify-content-between', 'align-items-center');
     li.setAttribute('data-id', conversationID);  // 存储会话ID
-    li.textContent = conversationName;  // 显示会话名称
+
+    // 设置会话名称和操作按钮
+    li.innerHTML = `
+        <span class="conversation-text"><i class="fas fa-comment-alt"></i> ${conversationName}</span>
+        <div class="button-group">
+            <button class="btn btn-sm btn-danger delete-conversation" title="删除">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="btn btn-sm btn-secondary rename-conversation" title="重命名">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+    `;
 
     conversationList.appendChild(li);
+
+    // 绑定删除和重命名事件
+    bindActionEvents(li);
 }
 
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+// 绑定删除和重命名事件
+function bindActionEvents(conversationItem) {
+    const deleteBtn = conversationItem.querySelector('.delete-conversation');
+    const renameBtn = conversationItem.querySelector('.rename-conversation');
+
+    // 删除按钮点击事件
+    deleteBtn.addEventListener('click', function() {
+        const conversationID = conversationItem.getAttribute('data-id');
+        // 删除操作
+        fetch(`/delete_conversation/${conversationID}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                conversationItem.remove();  // 成功删除会话项
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // 重命名按钮点击事件
+    renameBtn.addEventListener('click', function() {
+        const conversationID = conversationItem.getAttribute('data-id');
+        const newName = prompt("请输入新的会话名称：");
+
+        if (newName) {
+            // 重命名操作
+            fetch(`/rename_conversation/${conversationID}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ new_name: newName })
+            })
+            .then(response => {
+                if (response.ok) {
+                    conversationItem.querySelector('span').innerHTML = `<i class="fas fa-comment-alt"></i> ${newName}`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+}

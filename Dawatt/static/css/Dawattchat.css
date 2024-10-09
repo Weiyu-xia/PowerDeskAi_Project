@@ -29,9 +29,12 @@ body {
     padding: 12px;
     margin-bottom: 8px;
     border-radius: 8px;
-    transition: background-color 0.2s ease, transform 0.2s ease;  /* 平滑过渡效果 */
+    transition: background-color 0.2s ease, transform 0.2s ease;
     background-color: #f9f9f9;  /* 默认背景色 */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);  /* 添加轻微阴影 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);  /* 保持轻微阴影效果 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .sidebar .conversation-item.active {
@@ -46,6 +49,56 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 悬停时增加阴影 */
     transform: scale(1.03);  /* 悬停时稍微放大 */
 }
+
+/*————————————————————————————————————*/
+
+/* 调整按钮组样式 */
+.sidebar .conversation-item .button-group {
+    display: flex;
+    gap: 5px;  /* 控制按钮间距 */
+}
+
+/* 删除和重命名按钮样式 */
+.sidebar .conversation-item .btn {
+    padding: 5px 8px;
+    font-size: 12px;
+    transition: background-color 0.2s ease;  /* 按钮也要有平滑过渡效果 */
+}
+
+/* 删除按钮 */
+.sidebar .conversation-item .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.sidebar .conversation-item .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* 重命名按钮 */
+.sidebar .conversation-item .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.sidebar .conversation-item .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* 调整文字样式，增加 ellipsis 处理超长文本 */
+.conversation-text {
+    flex-grow: 1;
+    padding-right: 10px;  /* 给文字和按钮留出间距 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  /* 处理超长文本显示 */
+}
+
+/*————————————————————————————————————*/
 
 .card {
     border-radius: 10px;
