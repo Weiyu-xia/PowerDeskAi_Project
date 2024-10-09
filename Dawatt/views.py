@@ -154,6 +154,80 @@ class ConversationsListView(View):
             return JsonResponse({'error': str(e)}, status=500)
 
 
+# 删除会话的视图
+class DeleteConversationView(View):
+    """
+    处理根据 conversation_id 删除会话的请求。
+    """
+    def delete(self, request, conversation_id, *args, **kwargs):
+        user_id = request.GET.get('user', 'abc-123')  # 假设默认用户ID是'abc-123'
+
+        # 构建 API 请求的 URL
+        api_url = f"https://api.dify.ai/v1/conversations/{conversation_id}"
+        headers = {
+            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Content-Type': 'application/json'
+        }
+        body = {
+            'user': user_id
+        }
+
+        try:
+            # 发送 DELETE 请求
+            response = requests.delete(api_url, headers=headers, json=body)
+
+            # 检查响应状态
+            if response.status_code == 200:
+                return JsonResponse({'result': 'success'})
+            else:
+                return JsonResponse({'error': 'Failed to delete conversation', 'details': response.text}, status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+
+# 重命名会话的视图
+class RenameConversationView(View):
+    """
+    处理根据 conversation_id 重命名会话的请求。
+    """
+    def post(self, request, conversation_id, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
+        new_name = body_data.get('name', '').strip()  # 获取新的会话名称
+        user_id = body_data.get('user', 'abc-123')  # 默认用户ID
+
+        # 检查名称是否为空
+        if not new_name:
+            return JsonResponse({'error': 'Invalid name'}, status=400)
+
+        # 构建 API 请求的 URL
+        api_url = f"https://api.dify.ai/v1/conversations/{conversation_id}/name"
+        headers = {
+            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Content-Type': 'application/json'
+        }
+        body = {
+            'name': new_name,  # 手动输入的名称
+            'auto_generate': False,  # 禁用自动生成
+            'user': user_id
+        }
+
+        try:
+            response = requests.post(api_url, headers=headers, json=body)
+            print(f"API response: {response.status_code}, {response.text}")  # 打印 API 响应调试信息
+
+            if response.status_code == 200:
+                return JsonResponse({'result': 'success'})
+            else:
+                return JsonResponse({'error': 'Failed to rename conversation', 'details': response.text},
+                                    status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+
+
 # 添加一个新的视图来处理情绪识别
 def emotion_analysis(request):
     """

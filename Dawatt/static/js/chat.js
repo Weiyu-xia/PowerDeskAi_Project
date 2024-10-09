@@ -393,7 +393,7 @@ function bindActionEvents(conversationItem) {
     deleteBtn.addEventListener('click', function() {
         const conversationID = conversationItem.getAttribute('data-id');
         // 删除操作
-        fetch(`/delete_conversation/${conversationID}`, {
+        fetch(`/delete_conversation/${conversationID}/`, {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -402,6 +402,8 @@ function bindActionEvents(conversationItem) {
         .then(response => {
             if (response.ok) {
                 conversationItem.remove();  // 成功删除会话项
+            } else {
+                console.error('Failed to delete conversation');
             }
         })
         .catch(error => console.error('Error:', error));
@@ -409,25 +411,38 @@ function bindActionEvents(conversationItem) {
 
     // 重命名按钮点击事件
     renameBtn.addEventListener('click', function() {
+        const conversationItem = this.closest('li');  // 获取当前会话项的 li
         const conversationID = conversationItem.getAttribute('data-id');
         const newName = prompt("请输入新的会话名称：");
 
-        if (newName) {
-            // 重命名操作
-            fetch(`/rename_conversation/${conversationID}`, {
+        console.log("用户输入的新会话名称:", newName);  // 调试信息，查看用户输入
+
+        if (newName && newName.trim()) {
+            // 发送重命名请求
+            fetch(`/rename_conversation/${conversationID}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 },
-                body: JSON.stringify({ new_name: newName })
+                body: JSON.stringify({
+                    name: newName.trim(),  // 手动设置的名称
+                    auto_generate: 'false',  // 禁用自动生成
+                    user: 'abc-123'  // 假设用户ID固定为'abc-123'
+                })
             })
             .then(response => {
                 if (response.ok) {
                     conversationItem.querySelector('span').innerHTML = `<i class="fas fa-comment-alt"></i> ${newName}`;
+                    console.log('会话已成功重命名');
+                } else {
+                    console.error('重命名会话失败');
                 }
             })
             .catch(error => console.error('Error:', error));
+        } else {
+            console.log("请输入有效的会话名称");
         }
     });
+
 }

@@ -48,6 +48,29 @@
         <button id="new-conversation" class="btn btn-success w-100 mt-4"><i class="fas fa-plus-circle"></i> 新会话</button>
     </div>
 
+
+        <!-- 模态窗口 HTML -->
+    <div class="modal fade" id="renameModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="renameModalLabel">重命名会话</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="modal-rename-input" class="form-control" placeholder="请输入新的会话名称">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="renameConfirmButton">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- 欢迎界面 -->
     <div id="welcome-screen" class="col-10 d-flex justify-content-center align-items-center bg-light">
         <div class="text-center">
