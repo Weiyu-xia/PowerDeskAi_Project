@@ -70,6 +70,7 @@ class MessageHistoryView(View):
     def get(self, request, *args, **kwargs):
         # 从请求参数中获取必要的参数
         conversation_id = request.GET.get('conversation_id', None)
+
         user = request.GET.get('user', 'abc-123')  # 假设用户 ID 是 'abc-123'
         first_id = request.GET.get('first_id', None)
         limit = request.GET.get('limit', 20)
@@ -110,6 +111,47 @@ class MessageHistoryView(View):
             # 捕获请求异常并返回错误信息
             return JsonResponse({'error': str(e)}, status=500)
 
+
+# 获取会话列表
+class ConversationsListView(View):
+    """
+    处理获取当前用户的会话列表的请求。
+    """
+    def get(self, request, *args, **kwargs):
+        # 获取用户标识
+        user_id = request.GET.get('user', 'abc-123')  # 假设默认用户ID是'abc-123'
+        last_id = request.GET.get('last_id', None)
+        limit = request.GET.get('limit', 20)
+
+        # 构建 API 请求的 URL 和参数
+        api_url = "https://api.dify.ai/v1/conversations"
+        headers = {
+            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Content-Type': 'application/json'
+        }
+
+        # 构建请求参数
+        params = {
+            'user': user_id,
+            'last_id': last_id,
+            'limit': limit
+        }
+
+        try:
+            # 向外部 API 发送 GET 请求以获取会话列表
+            response = requests.get(api_url, headers=headers, params=params)
+
+            if response.status_code == 200:
+                data = response.json()  # 解析 JSON 响应
+                return JsonResponse(data)  # 返回会话列表数据
+
+            # 处理请求失败的情况
+            else:
+                return JsonResponse({'error': 'Failed to fetch conversation list', 'details': response.text}, status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            # 捕获请求异常并返回错误信息
+            return JsonResponse({'error': str(e)}, status=500)
 
 
 # 添加一个新的视图来处理情绪识别

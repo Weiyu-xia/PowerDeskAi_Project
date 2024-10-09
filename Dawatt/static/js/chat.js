@@ -7,6 +7,7 @@ const newConversationButton = document.getElementById('new-conversation');
 
 let chatHistory = [];
 
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // 表单提交事件处理
 form.addEventListener('submit', function(event) {
@@ -100,6 +101,8 @@ form.addEventListener('submit', function(event) {
 
 });
 
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
 // 解析并转换Markdown标记
 function parseMarkdown(text) {
     return text
@@ -108,6 +111,8 @@ function parseMarkdown(text) {
         .replace(/``(.*?)``/g, '<code>$1</code>')         // 代码块
         .replace(/\n/g, '<br>');                          // 换行
 }
+
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // 添加消息到聊天框
 function appendMessage(sender, message) {
@@ -133,7 +138,7 @@ function appendMessage(sender, message) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //优化界面
 document.addEventListener('DOMContentLoaded', function () {
@@ -166,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // 等待文档加载完成后再执行
 document.addEventListener('DOMContentLoaded', function () {
@@ -187,49 +192,53 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+// // 点击“新会话”按钮时
+// newConversationButton.addEventListener('click', function() {
+//     // 显示聊天界面，隐藏欢迎界面
+//     welcomeScreen.classList.add('d-none');
+//     chatScreen.classList.remove('d-none');
+//
+//     // 发送一个请求到后端重置 conversation_id
+//     fetch('/DawattChat/new-conversation/', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+//         },
+//         body: JSON.stringify({})
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.message === '会话已重置') {
+//             console.log('会话已重置');
+//             window.currentConversationID = data.conversation_id; // 存储新的会话 ID
+//             chatHistory = []; // 清空聊天记录
+//             document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
+//
+//             // 在侧边栏新增会话条目
+//             // 修改此处，确保只添加带有会话 ID 的项
+//             appendConversationToList(data.conversation_id, `会话 ${data.conversation_id}`);
+//         } else {
+//             console.error('无法重置会话');
+//         }
+//     })
+//     .catch(error => console.error('Error:', error));
+// });
 
-// 点击“新会话”按钮时
-newConversationButton.addEventListener('click', function() {
-    // 显示聊天界面，隐藏欢迎界面
-    welcomeScreen.classList.add('d-none');
-    chatScreen.classList.remove('d-none');
-
-    // 发送一个请求到后端重置 conversation_id
-    fetch('/DawattChat/new-conversation/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({})
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message === '会话已重置') {
-            console.log('会话已重置');
-            window.currentConversationID = data.conversation_id; // 存储新的会话 ID
-            chatHistory = []; // 清空聊天记录
-            document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
-
-            // 在侧边栏新增会话条目
-            const newSessionItem = document.createElement('li');
-            newSessionItem.classList.add('list-group-item', 'conversation-item');
-            newSessionItem.innerHTML = `<i class="fas fa-comment-alt"></i> ${data.conversation_id}`;
-            document.getElementById('conversation-list').appendChild(newSessionItem);
-        } else {
-            console.error('无法重置会话');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // 点击会话列表项时获取聊天记录并切换会话 ID
 document.getElementById('conversation-list').addEventListener('click', function(e) {
     if (e.target && e.target.matches('li.conversation-item')) {
-        let conversationID = e.target.textContent.trim();
+        // 获取 li 的 data-id 属性作为 conversationID
+        let conversationID = e.target.getAttribute('data-id');
         window.currentConversationID = conversationID;  // 将会话ID存储为全局变量
+
+        //隐藏欢迎界面，显示聊天界面
+        document.getElementById('welcome-screen').classList.add('d-none');
+        document.getElementById('chat-screen').classList.remove('d-none');
 
         fetch(`/messages/?conversation_id=${conversationID}&user=abc-123&limit=20`)
             .then(response => response.json())
@@ -281,4 +290,81 @@ function appendMessage(sender, message) {
     chatBox.insertAdjacentHTML('beforeend', messageHtml);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 页面加载时获取会话列表
+    fetchConversations();
+
+    // 点击“新会话”按钮时重置会话并新增到会话列表
+    newConversationButton.addEventListener('click', function() {
+        // 显示聊天界面，隐藏欢迎界面
+        welcomeScreen.classList.add('d-none');
+        chatScreen.classList.remove('d-none');
+
+        // 发送请求到后端重置 conversation_id 并创建新会话
+        fetch('/DawattChat/new-conversation/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === '会话已重置') {
+                console.log('会话已重置');
+                window.currentConversationID = data.conversation_id; // 存储新的会话 ID
+                chatHistory = []; // 清空聊天记录
+                document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
+
+                // 在侧边栏新增会话条目
+                appendConversationToList(data.conversation_id, `Chat: ${data.conversation_id}`);
+            } else {
+                console.error('无法重置会话');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+
+// 获取会话列表
+function fetchConversations() {
+    fetch(`/conversations?user=abc-123&limit=20`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+            } else {
+                renderConversationList(data.data);  // 渲染会话列表
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// 渲染会话列表
+function renderConversationList(conversations) {
+    const conversationList = document.getElementById('conversation-list');
+    conversationList.innerHTML = '';  // 清空会话列表
+
+    conversations.forEach(conversation => {
+        appendConversationToList(conversation.id, conversation.name);
+    });
+}
+
+// 在会话列表中添加会话项
+function appendConversationToList(conversationID, conversationName) {
+    const conversationList = document.getElementById('conversation-list');
+
+    // 使用 data-id 存储会话的唯一 ID
+    const li = document.createElement('li');
+    li.classList.add('conversation-item');
+    li.setAttribute('data-id', conversationID);  // 存储会话ID
+    li.textContent = conversationName;  // 显示会话名称
+
+    conversationList.appendChild(li);
+}
+
 

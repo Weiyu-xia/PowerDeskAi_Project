@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views as Dawatt_views
 from django.contrib.auth import views as auth_views
-from .views import LoginPage, LogoutView, emotion_analysis, new_conversation, MessageHistoryView
+from .views import LoginPage, LogoutView, emotion_analysis, new_conversation, MessageHistoryView, ConversationsListView
 
 urlpatterns = [
     path('login/', LoginPage.as_view(), name='login'),
@@ -16,5 +16,7 @@ urlpatterns = [
     path('DawattChat/new-conversation/', new_conversation, name='new_conversation'),
 
     path('messages/', MessageHistoryView.as_view(), name='message_history'),
+
+path('conversations', ConversationsListView.as_view(), name='conversation_list'),  # 添加这一行
 
 ]
