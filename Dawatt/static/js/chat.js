@@ -270,8 +270,8 @@ function renderChatHistory(history) {
 // 添加消息到聊天框2
 function appendMessage(sender, message) {
     const messageClass = sender === '用户'
-        ? 'bg-light text-dark'
-        : 'bg-primary text-white';
+        ? 'bg-success text-white'  // 将用户消息的背景颜色改为绿色（Bootstrap 类 bg-success）
+        : 'bg-primary text-white';  // 大瓦特的消息仍为蓝色
 
     const avatarSrc = sender === '用户'
         ? '/static/images/User.png'
@@ -290,6 +290,7 @@ function appendMessage(sender, message) {
     chatBox.insertAdjacentHTML('beforeend', messageHtml);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
