@@ -14,7 +14,6 @@ body {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    height: 100vh; /* 保证侧边栏高度占满屏幕 */
 }
 
 .sidebar h5 {

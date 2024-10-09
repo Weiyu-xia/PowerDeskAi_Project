@@ -331,7 +331,7 @@ function appendConversationToList(conversationID, conversationName) {
 
     // 设置会话名称和操作按钮
     li.innerHTML = `
-        <span class="conversation-text"><i class="fas fa-comment-alt"></i> ${conversationName}</span>
+        <span class="conversation-text"> ${conversationName}</span>
         <div class="button-group">
             <button class="btn btn-sm btn-danger delete-conversation" title="删除">
                 <i class="fas fa-trash-alt"></i>
