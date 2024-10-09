@@ -12,6 +12,9 @@ body {
     background-color: #ffffff;
     border-right: 1px solid #ddd;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 保证侧边栏高度占满屏幕 */
 }
 
 .sidebar h5 {
@@ -22,6 +25,8 @@ body {
 #conversation-list {
     list-style-type: none;  /* 去掉默认的圆点 */
     padding-left: 0;  /* 去除左边内边距 */
+    flex-grow: 1; /* 确保会话列表占据剩余空间 */
+    overflow-y: auto; /* 启用滚动条 */
 }
 
 .sidebar .conversation-item {
@@ -38,25 +43,41 @@ body {
     background-color: #eaf4ff;
     color: #104E8B;
     font-weight: bold;
-    transform: scale(1.02);  /* 选中时稍微放大 */
+    transform: scale(1, 1.02); /* 只在Y轴方向放大 */
+    box-sizing: border-box; /* 确保不改变元素的外部尺寸 */
 }
 
 .sidebar .conversation-item:hover {
     background-color: #f0f8ff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 悬停时增加阴影 */
-    transform: scale(1.03);  /* 悬停时稍微放大 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: scale(1, 1.03); /* 只在Y轴方向放大 */
+}
+
+/* 调整聊天记录框，防止高度增加，启用滚动 */
+#chat-box {
+    background-color: #f9f9f9;
+    flex-grow: 1;
+    overflow-y: auto; /* 启用垂直滚动条 */
+    height: 300px; /* 固定高度，允许滚动 */
+    max-height: 100%; /* 防止超出最大高度 */
 }
 
 .card {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden; /* 防止内容溢出 */
     border-radius: 10px;
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-#chat-box {
-    background-color: #f9f9f9;
+/* 保证主聊天区域高度自适应 */
+#chat-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* 确保主聊天区域填充整个容器 */
 }
 
-/*——————————————————————————————————————*/
 /* 美化常见问题按钮 */
 .common-question {
     transition: transform 0.2s ease;
