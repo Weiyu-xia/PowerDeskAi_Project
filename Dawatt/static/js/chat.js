@@ -194,41 +194,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-// // 点击“新会话”按钮时
-// newConversationButton.addEventListener('click', function() {
-//     // 显示聊天界面，隐藏欢迎界面
-//     welcomeScreen.classList.add('d-none');
-//     chatScreen.classList.remove('d-none');
-//
-//     // 发送一个请求到后端重置 conversation_id
-//     fetch('/DawattChat/new-conversation/', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-//         },
-//         body: JSON.stringify({})
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.message === '会话已重置') {
-//             console.log('会话已重置');
-//             window.currentConversationID = data.conversation_id; // 存储新的会话 ID
-//             chatHistory = []; // 清空聊天记录
-//             document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
-//
-//             // 在侧边栏新增会话条目
-//             // 修改此处，确保只添加带有会话 ID 的项
-//             appendConversationToList(data.conversation_id, `会话 ${data.conversation_id}`);
-//         } else {
-//             console.error('无法重置会话');
-//         }
-//     })
-//     .catch(error => console.error('Error:', error));
-// });
-
-// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 // 点击会话列表项时获取聊天记录并切换会话 ID
 document.getElementById('conversation-list').addEventListener('click', function(e) {
     if (e.target && e.target.matches('li.conversation-item')) {
