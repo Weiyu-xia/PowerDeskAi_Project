@@ -449,8 +449,7 @@ document.getElementById('generate-ticket').addEventListener('click', function() 
                         console.error(ticketData.error);
                     } else {
                         // 显示工单摘要
-                        document.getElementById('ticket-summary').innerHTML = `
-                            <p><strong>工单内容：</strong> ${ticketData.summary}</p>`;
+                        document.getElementById('ticket-summary').innerHTML = ticketData.summary
                         // 隐藏聊天界面，显示工单窗口
                         document.getElementById('chat-screen').classList.add('d-none');
                         document.getElementById('ticket-screen').classList.remove('d-none');
