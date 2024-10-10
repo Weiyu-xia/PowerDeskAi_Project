@@ -10,7 +10,7 @@ let chatHistory = [];
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // 表单提交事件处理
-form.addEventListener('submit', function(event) {
+form.addEventListener('submit', function (event) {
     event.preventDefault();
     const userInput = document.getElementById('user_input').value.trim();
     if (!userInput) return;
@@ -18,7 +18,7 @@ form.addEventListener('submit', function(event) {
     const currentConvID = window.currentConversationID || null;  // 如果没有会话ID则传递 null
 
     // 将用户输入添加到聊天记录
-    chatHistory.push({ role: 'user', content: userInput });
+    chatHistory.push({role: 'user', content: userInput});
     // 将用户输入添加到聊天框
     appendMessage('用户', userInput);
     // 清空用户输入框
@@ -36,38 +36,38 @@ form.addEventListener('submit', function(event) {
             conversation_id: currentConvID  // 发送当前会话ID
         })
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let partialData = '';
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let partialData = '';
 
-        // 逐字显示大模型的回复
-        appendMessage('大瓦特', '');
+            // 逐字显示大模型的回复
+            appendMessage('大瓦特', '');
 
-        const replyDiv = chatBox.lastElementChild.querySelector('.reply-content');
+            const replyDiv = chatBox.lastElementChild.querySelector('.reply-content');
 
-        function readStream() {
-            reader.read().then(({ done, value }) => {
-                if (done) {
-                    chatHistory.push({ role: 'assistant', content: partialData });
-                    return;
-                }
+            function readStream() {
+                reader.read().then(({done, value}) => {
+                    if (done) {
+                        chatHistory.push({role: 'assistant', content: partialData});
+                        return;
+                    }
 
-                // 处理流式传输的数据
-                partialData += decoder.decode(value, { stream: true });
-                replyDiv.innerHTML = parseMarkdown(partialData);
-                chatBox.scrollTop = chatBox.scrollHeight;
+                    // 处理流式传输的数据
+                    partialData += decoder.decode(value, {stream: true});
+                    replyDiv.innerHTML = parseMarkdown(partialData);
+                    chatBox.scrollTop = chatBox.scrollHeight;
 
-                readStream();
-            }).catch(error => console.error('Error:', error));
-        }
+                    readStream();
+                }).catch(error => console.error('Error:', error));
+            }
 
-        readStream();
-    })
-    .catch(error => console.error('Error:', error));
+            readStream();
+        })
+        .catch(error => console.error('Error:', error));
 
     // 第二个请求：获取情绪识别结果
     fetch('/DawattChat/emotion/', {
@@ -76,28 +76,28 @@ form.addEventListener('submit', function(event) {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-        body: JSON.stringify({ chat_history: chatHistory })
+        body: JSON.stringify({chat_history: chatHistory})
     })
-    .then(response => response.json())  // 解析JSON响应
-    .then(data => {
-         console.log("情绪识别返回数据: ", data);  // 调试输出
-        // 获取情绪识别结果
-        let emotionLabel = data.emotion_label;
+        .then(response => response.json())  // 解析JSON响应
+        .then(data => {
+            console.log("情绪识别返回数据: ", data);  // 调试输出
+            // 获取情绪识别结果
+            let emotionLabel = data.emotion_label;
 
-        // 判断情绪结果，并设置页面显示的情绪
-        let emotionText = '';
-        if (emotionLabel === 1) {
-            emotionText = '正面';
-        } else if (emotionLabel === 0) {
-            emotionText = '负面';
-        } else {
-            emotionText = '平静';  // 处理其他未知情绪标签
-        }
-        // 更新情绪识别结果显示区域
-        const emotionDiv = document.getElementById('emotion-label');
-        emotionDiv.innerHTML = `情绪识别结果：${emotionText}`;
-    })
-    .catch(error => console.error('Error:', error));
+            // 判断情绪结果，并设置页面显示的情绪
+            let emotionText = '';
+            if (emotionLabel === 1) {
+                emotionText = '正面';
+            } else if (emotionLabel === 0) {
+                emotionText = '负面';
+            } else {
+                emotionText = '平静';  // 处理其他未知情绪标签
+            }
+            // 更新情绪识别结果显示区域
+            const emotionDiv = document.getElementById('emotion-label');
+            emotionDiv.innerHTML = `情绪识别结果：${emotionText}`;
+        })
+        .catch(error => console.error('Error:', error));
 
 });
 
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 为每个按钮添加点击事件
     commonQuestionButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             // 获取按钮上的问题内容
             const question = this.getAttribute('data-value');
             // 将内容填入输入框
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 // 点击会话列表项时获取聊天记录并切换会话 ID
-document.getElementById('conversation-list').addEventListener('click', function(e) {
+document.getElementById('conversation-list').addEventListener('click', function (e) {
     if (e.target && e.target.matches('li.conversation-item')) {
         // 获取 li 的 data-id 属性作为 conversationID
         let conversationID = e.target.getAttribute('data-id');
@@ -259,12 +259,12 @@ function appendMessage(sender, message) {
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // 页面加载时获取会话列表
     fetchConversations();
 
     // 点击“新会话”按钮时重置会话并新增到会话列表
-    newConversationButton.addEventListener('click', function() {
+    newConversationButton.addEventListener('click', function () {
         // 显示聊天界面，隐藏欢迎界面
         welcomeScreen.classList.add('d-none');
         chatScreen.classList.remove('d-none');
@@ -278,21 +278,21 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({})
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === '会话已重置') {
-                console.log('会话已重置');
-                window.currentConversationID = data.conversation_id; // 存储新的会话 ID
-                chatHistory = []; // 清空聊天记录
-                document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === '会话已重置') {
+                    console.log('会话已重置');
+                    window.currentConversationID = data.conversation_id; // 存储新的会话 ID
+                    chatHistory = []; // 清空聊天记录
+                    document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
 
-                // 在侧边栏新增会话条目
-                appendConversationToList(data.conversation_id, `Chat: ${data.conversation_id}`);
-            } else {
-                console.error('无法重置会话');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+                    // 在侧边栏新增会话条目
+                    appendConversationToList(data.conversation_id, `Chat: ${data.conversation_id}`);
+                } else {
+                    console.error('无法重置会话');
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 });
 
@@ -356,7 +356,7 @@ function bindActionEvents(conversationItem) {
     const renameBtn = conversationItem.querySelector('.rename-conversation');
 
     // 删除按钮点击事件
-    deleteBtn.addEventListener('click', function() {
+    deleteBtn.addEventListener('click', function () {
         const conversationID = conversationItem.getAttribute('data-id');
         // 删除操作
         fetch(`/delete_conversation/${conversationID}/`, {
@@ -365,18 +365,18 @@ function bindActionEvents(conversationItem) {
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             }
         })
-        .then(response => {
-            if (response.ok) {
-                conversationItem.remove();  // 成功删除会话项
-            } else {
-                console.error('Failed to delete conversation');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (response.ok) {
+                    conversationItem.remove();  // 成功删除会话项
+                } else {
+                    console.error('Failed to delete conversation');
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     // 重命名按钮点击事件
-    renameBtn.addEventListener('click', function() {
+    renameBtn.addEventListener('click', function () {
         const conversationItem = this.closest('li');  // 获取当前会话项的 li
         const conversationID = conversationItem.getAttribute('data-id');
         const newName = prompt("请输入新的会话名称：");
@@ -397,18 +397,33 @@ function bindActionEvents(conversationItem) {
                     user: 'abc-123'  // 假设用户ID固定为'abc-123'
                 })
             })
-            .then(response => {
-                if (response.ok) {
-                    conversationItem.querySelector('span').innerHTML = `<i class="fas fa-comment-alt"></i> ${newName}`;
-                    console.log('会话已成功重命名');
-                } else {
-                    console.error('重命名会话失败');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => {
+                    if (response.ok) {
+                        conversationItem.querySelector('span').innerHTML = `<i class="fas fa-comment-alt"></i> ${newName}`;
+                        console.log('会话已成功重命名');
+                    } else {
+                        console.error('重命名会话失败');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         } else {
             console.log("请输入有效的会话名称");
         }
     });
 
 }
+
+
+//隐藏聊天界面，显示工单摘要界面
+document.getElementById('generate-ticket').addEventListener('click', function() {
+    // 隐藏聊天界面，显示工单摘要界面
+    document.getElementById('chat-screen').classList.add('d-none');
+    document.getElementById('ticket-screen').classList.remove('d-none');
+});
+
+document.getElementById('back-to-chat').addEventListener('click', function() {
+    // 返回聊天界面，隐藏工单摘要界面
+    document.getElementById('ticket-screen').classList.add('d-none');
+    document.getElementById('chat-screen').classList.remove('d-none');
+});
+
