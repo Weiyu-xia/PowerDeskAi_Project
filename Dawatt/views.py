@@ -1,3 +1,5 @@
+import re
+
 from django.http import JsonResponse, StreamingHttpResponse
 import json
 from .client import Call_Dawatt, reset_conversation_id, generate_conversation_id
@@ -269,8 +271,11 @@ class GenerateTicketView(View):
                 response_data = response.json()
                 ticket_summary = response_data.get("answer", "未生成工单摘要")
 
+                # 通过正则表达式匹配并移除 ```html 和末尾的 ```
+                clean_summary = re.sub(r'```html\s*|```', '', ticket_summary).strip()
+
                 # 返回生成的工单摘要
-                return JsonResponse({'summary': ticket_summary})
+                return JsonResponse({'summary': clean_summary})
             else:
                 return JsonResponse({'error': 'Failed to generate ticket', 'details': response.text},
                                     status=response.status_code)
