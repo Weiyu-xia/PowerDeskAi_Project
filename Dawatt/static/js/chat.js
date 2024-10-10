@@ -413,12 +413,52 @@ function bindActionEvents(conversationItem) {
 
 }
 
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 //隐藏聊天界面，显示工单摘要界面
 document.getElementById('generate-ticket').addEventListener('click', function() {
-    // 隐藏聊天界面，显示工单摘要界面
-    document.getElementById('chat-screen').classList.add('d-none');
-    document.getElementById('ticket-screen').classList.remove('d-none');
+    const conversationID = window.currentConversationID || null;  // 确保有会话ID
+    if (!conversationID) {
+        alert("请先选择或创建一个会话。");
+        return;
+    }
+    // 调用后端获取聊天记录
+    fetch(`/messages/?conversation_id=${conversationID}&limit=50`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+            } else {
+                // 提取聊天记录，格式化为示例格式
+                const chatHistoryFormatted = data.data.map(item =>
+                    `user:${item.query}, assistant:${item.answer}`
+                );
+
+                // 调用后端生成工单摘要
+                fetch('/generate_ticket/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({ chat_history: chatHistoryFormatted })
+                })
+                .then(response => response.json())
+                .then(ticketData => {
+                    if (ticketData.error) {
+                        console.error(ticketData.error);
+                    } else {
+                        // 显示工单摘要
+                        document.getElementById('ticket-summary').innerHTML = `
+                            <p><strong>工单内容：</strong> ${ticketData.summary}</p>`;
+                        // 隐藏聊天界面，显示工单窗口
+                        document.getElementById('chat-screen').classList.add('d-none');
+                        document.getElementById('ticket-screen').classList.remove('d-none');
+                    }
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
 });
 
 document.getElementById('back-to-chat').addEventListener('click', function() {

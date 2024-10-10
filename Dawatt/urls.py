@@ -2,7 +2,7 @@ from django.urls import path
 from . import views as Dawatt_views
 from django.contrib.auth import views as auth_views
 from .views import LoginPage, LogoutView, emotion_analysis, new_conversation, MessageHistoryView, ConversationsListView, \
-    DeleteConversationView, RenameConversationView
+    DeleteConversationView, RenameConversationView, GenerateTicketView
 
 urlpatterns = [
     path('login/', LoginPage.as_view(), name='login'),
@@ -24,5 +24,7 @@ urlpatterns = [
     path('delete_conversation/<str:conversation_id>/', DeleteConversationView.as_view(), name='delete_conversation'),
 
     path('rename_conversation/<str:conversation_id>/', RenameConversationView.as_view(), name='rename_conversation'),
+
+    path('generate_ticket/', GenerateTicketView.as_view(), name='generate_ticket'),
 
 ]

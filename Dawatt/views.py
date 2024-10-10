@@ -228,6 +228,53 @@ class RenameConversationView(View):
 
 
 
+class GenerateTicketView(View):
+    """
+    处理根据聊天记录生成工单的请求。
+    """
+    def post(self, request, *args, **kwargs):
+        # 获取前端传来的聊天记录
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
+        chat_history = body_data.get('chat_history', [])
+
+        # 准备API调用的请求数据
+        api_url = "https://api.dify.ai/v1/chat-messages"
+        headers = {
+            'Authorization': 'Bearer app-j3THpZ5Ve8PvOC8wzsutlPkJ',  # 替换为你的API密钥
+            'Content-Type': 'application/json'
+        }
+
+        payload = {
+            "query": chat_history,
+            "inputs": {},  # 如果有额外的输入变量，可以在这里添加
+            "response_mode": "blocking",  # 使用阻塞模式
+            "user": "abc-123",  # 设置用户标识
+            "conversation_id": None  # 可选，如果需要继续某个会话
+        }
+
+        try:
+            # 向大模型发送POST请求
+            response = requests.post(api_url, headers=headers, json=payload)
+
+            # 检查请求是否成功
+            if response.status_code == 200:
+                response_data = response.json()
+                ticket_summary = response_data.get("answer", "未生成工单摘要")
+
+                # 返回生成的工单摘要
+                return JsonResponse({'summary': ticket_summary})
+            else:
+                return JsonResponse({'error': 'Failed to generate ticket', 'details': response.text},
+                                    status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            # 捕获请求异常并返回错误信息
+            return JsonResponse({'error': str(e)}, status=500)
+
+
+
+
 # 添加一个新的视图来处理情绪识别
 def emotion_analysis(request):
     """
