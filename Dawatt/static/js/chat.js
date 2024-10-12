@@ -415,19 +415,39 @@ function bindActionEvents(conversationItem) {
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-//隐藏聊天界面，显示工单摘要界面
-document.getElementById('generate-ticket').addEventListener('click', function() {
+// 获取按钮和加载动画的DOM元素
+const generateTicketButton = document.getElementById('generate-ticket');
+const loadingOverlay = document.createElement('div');
+
+// 设置加载动画的样式
+loadingOverlay.innerHTML = `
+    <div class="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">加载中...</span>
+        </div>
+    </div>
+`;
+loadingOverlay.style.display = 'none';  // 初始隐藏
+document.body.appendChild(loadingOverlay);
+
+// 隐藏聊天界面，显示工单摘要界面
+generateTicketButton.addEventListener('click', function() {
     const conversationID = window.currentConversationID || null;  // 确保有会话ID
     if (!conversationID) {
         alert("请先选择或创建一个会话。");
         return;
     }
+
+    // 显示加载动画
+    loadingOverlay.style.display = 'flex';
+
     // 调用后端获取聊天记录
     fetch(`/messages/?conversation_id=${conversationID}&limit=50`)
         .then(response => response.json())
         .then(data => {
             if (data.error) {
                 console.error(data.error);
+                loadingOverlay.style.display = 'none';  // 出错时隐藏加载动画
             } else {
                 // 提取聊天记录，格式化为示例格式
                 const chatHistoryFormatted = data.data.map(item =>
@@ -455,10 +475,19 @@ document.getElementById('generate-ticket').addEventListener('click', function() 
                         document.getElementById('chat-screen').classList.add('d-none');
                         document.getElementById('ticket-screen').classList.remove('d-none');
                     }
+                    // 隐藏加载动画
+                    loadingOverlay.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingOverlay.style.display = 'none';  // 出错时隐藏加载动画
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            loadingOverlay.style.display = 'none';  // 出错时隐藏加载动画
+        });
 });
 
 document.getElementById('back-to-chat').addEventListener('click', function() {
@@ -466,4 +495,5 @@ document.getElementById('back-to-chat').addEventListener('click', function() {
     document.getElementById('ticket-screen').classList.add('d-none');
     document.getElementById('chat-screen').classList.remove('d-none');
 });
+
 

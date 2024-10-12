@@ -68,23 +68,25 @@
                 </div>
 
                 <!-- 常见问题按钮 -->
-                <div class="mb-3 d-flex flex-wrap gap-2">
+                <div class="d-flex flex-wrap p-3">
                     <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>
                     <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>
                     <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>
                     <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>
                 </div>
 
-                <div class="p-3">
+                <div class="p-2">
                     <!-- 输入框 -->
                     <form id="chat-form" class="input-group">
                         {% csrf_token %}
                         <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." required>
-                        <button class="btn btn-primary" type="submit">发送</button><button id="generate-ticket" class="btn btn-warning">生成工单</button>
+                        <button class="btn btn-primary" type="submit">发送</button>
                     </form>
                 </div>
+                <button id="generate-ticket" class="btn btn-warning">生成工单</button>
             </div>
         </div>
+
 
         <!-- 新的工单摘要窗口，初始隐藏 -->
         <div id="ticket-screen" class="col-10 p-4 d-none">
