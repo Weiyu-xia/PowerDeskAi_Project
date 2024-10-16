@@ -469,8 +469,9 @@ generateTicketButton.addEventListener('click', function() {
                         console.error(ticketData.error);
                     } else {
                         // 显示工单摘要
+                        const cleanSummary = ticketData.summary.replace(/```html/g, '').replace(/```/g, '');
                         document.getElementById('ticket-summary').innerHTML = `
-                            <p><strong>工单内容：</strong> ${ticketData.summary}</p>`;
+                            <p><strong>工单内容：</strong> ${cleanSummary}</p>`;
                         // 隐藏聊天界面，显示工单窗口
                         document.getElementById('chat-screen').classList.add('d-none');
                         document.getElementById('ticket-screen').classList.remove('d-none');
