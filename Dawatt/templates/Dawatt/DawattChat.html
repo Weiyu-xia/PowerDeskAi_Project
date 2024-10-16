@@ -67,24 +67,28 @@
                     <!-- 聊天记录插入位置 -->
                 </div>
 
-                <!-- 常见问题按钮 -->
-                <div class="d-flex flex-wrap p-3">
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>
-                </div>
+{#        <!-- 常见问题按钮 -->#}
+{#        <div class="d-flex flex-wrap p-3 gap-2"> <!-- 增加gap属性控制按钮间距 -->#}
+{#            <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>#}
+{#            <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>#}
+{#            <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>#}
+{#            <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>#}
+{#        </div>#}
 
-                <div class="p-2">
-                    <!-- 输入框 -->
-                    <form id="chat-form" class="input-group">
-                        {% csrf_token %}
-                        <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." required>
-                        <button class="btn btn-primary" type="submit">发送</button>
-                    </form>
-                </div>
-                <button id="generate-ticket" class="btn btn-warning">生成工单</button>
-            </div>
+        <!-- 输入框和按钮 -->
+        <div class="p-2">
+            <form id="chat-form" class="input-group">
+                {% csrf_token %}
+                <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." required>
+                <!-- 新增语音输入按钮 -->
+                <button type="button" id="voice-input" class="btn btn-secondary" aria-label="语音输入">
+                    <i class="fas fa-microphone"></i> <!-- 语音图标 -->
+                </button>
+                <button class="btn btn-primary" type="submit">发送</button>
+            </form>
+        </div>
+            <!-- 生成工单按钮 -->
+            <button id="generate-ticket" class="btn btn-warning">生成工单</button>
         </div>
 
 
