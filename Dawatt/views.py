@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.views import View
 import requests
-
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 # 登录界面
 class LoginPage(TemplateView):
@@ -67,6 +67,7 @@ class MessageHistoryView(View):
     """
     处理根据 conversation_id 获取历史聊天记录的请求。
     """
+
     def get(self, request, *args, **kwargs):
         # 从请求参数中获取必要的参数
         conversation_id = request.GET.get('conversation_id', None)
@@ -105,7 +106,8 @@ class MessageHistoryView(View):
 
             # 请求失败的处理
             else:
-                return JsonResponse({'error': 'Failed to fetch chat history', 'details': response.text}, status=response.status_code)
+                return JsonResponse({'error': 'Failed to fetch chat history', 'details': response.text},
+                                    status=response.status_code)
 
         except requests.exceptions.RequestException as e:
             # 捕获请求异常并返回错误信息
@@ -117,6 +119,7 @@ class ConversationsListView(View):
     """
     处理获取当前用户的会话列表的请求。
     """
+
     def get(self, request, *args, **kwargs):
         # 获取用户标识
         user_id = request.GET.get('user', 'abc-123')  # 假设默认用户ID是'abc-123'
@@ -147,7 +150,8 @@ class ConversationsListView(View):
 
             # 处理请求失败的情况
             else:
-                return JsonResponse({'error': 'Failed to fetch conversation list', 'details': response.text}, status=response.status_code)
+                return JsonResponse({'error': 'Failed to fetch conversation list', 'details': response.text},
+                                    status=response.status_code)
 
         except requests.exceptions.RequestException as e:
             # 捕获请求异常并返回错误信息
@@ -159,6 +163,7 @@ class DeleteConversationView(View):
     """
     处理根据 conversation_id 删除会话的请求。
     """
+
     def delete(self, request, conversation_id, *args, **kwargs):
         user_id = request.GET.get('user', 'abc-123')  # 假设默认用户ID是'abc-123'
 
@@ -180,7 +185,8 @@ class DeleteConversationView(View):
             if response.status_code == 200:
                 return JsonResponse({'result': 'success'})
             else:
-                return JsonResponse({'error': 'Failed to delete conversation', 'details': response.text}, status=response.status_code)
+                return JsonResponse({'error': 'Failed to delete conversation', 'details': response.text},
+                                    status=response.status_code)
 
         except requests.exceptions.RequestException as e:
             return JsonResponse({'error': str(e)}, status=500)
@@ -191,6 +197,7 @@ class RenameConversationView(View):
     """
     处理根据 conversation_id 重命名会话的请求。
     """
+
     def post(self, request, conversation_id, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body_data = json.loads(body_unicode)
@@ -227,11 +234,11 @@ class RenameConversationView(View):
             return JsonResponse({'error': str(e)}, status=500)
 
 
-
 class GenerateTicketView(View):
     """
     处理根据聊天记录生成工单的请求。
     """
+
     def post(self, request, *args, **kwargs):
         # 获取前端传来的聊天记录
         body_unicode = request.body.decode('utf-8')
@@ -273,8 +280,6 @@ class GenerateTicketView(View):
             return JsonResponse({'error': str(e)}, status=500)
 
 
-
-
 # 添加一个新的视图来处理情绪识别
 def emotion_analysis(request):
     """
@@ -310,3 +315,19 @@ def new_conversation(request):
     reset_conversation_id()  # 重置当前的会话 ID
     new_conv_id = generate_conversation_id()  # 生成新的会话 ID
     return JsonResponse({'message': '会话已重置', 'conversation_id': new_conv_id})
+
+
+class SpeechRecognitionConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        pass
+
+    async def receive(self, text_data=None, bytes_data=None):
+        if bytes_data:
+            try:
+                result_text = await recognize_audio(bytes_data)  # 调用recognition.py中的音频处理函数
+                await self.send(result_text)
+            except Exception as e:
+                await self.send(f"Error: {str(e)}")

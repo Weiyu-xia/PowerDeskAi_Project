@@ -497,3 +497,48 @@ document.getElementById('back-to-chat').addEventListener('click', function() {
 });
 
 
+// WebSocket 连接，修改为适当的 URL
+const ws = new WebSocket('ws://localhost:8000');
+
+// 录音功能
+document.getElementById('voice-input').addEventListener('click', async function () {
+    try {
+        // 请求用户麦克风权限
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        const audioChunks = [];
+
+        // 当有音频数据时，推送到数组中
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
+
+        // 录音结束时发送音频
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(audioBlob);
+
+            // 读取完成后发送给服务器
+            reader.onloadend = () => {
+                ws.send(reader.result);  // 发送音频数据
+            };
+        };
+
+        // 开始录音
+        mediaRecorder.start();
+
+        // 停止录音按钮
+        setTimeout(() => {
+            mediaRecorder.stop();  // 停止录音，10秒录音时间限制
+        }, 10000);  // 10 秒后自动停止录音
+    } catch (error) {
+        console.error('录音失败:', error);
+    }
+});
+
+// 处理服务器返回的识别结果
+ws.onmessage = function (event) {
+    const resultText = event.data;
+    appendMessage('识别结果', resultText);  // 显示返回的文本
+};
