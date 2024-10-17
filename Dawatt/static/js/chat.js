@@ -327,7 +327,7 @@ function appendConversationToList(conversationID, conversationName) {
     // 使用 data-id 存储会话的唯一 ID
     const li = document.createElement('li');
     li.classList.add('conversation-item', 'd-flex', 'justify-content-between', 'align-items-center');
-    li.setAttribute('data-id', conversationID);  // 存储会话ID
+    li.setAttribute('data-id', "New Chat");  // 存储会话ID
 
     // 设置会话名称和操作按钮
     li.innerHTML = `
@@ -495,6 +495,66 @@ document.getElementById('back-to-chat').addEventListener('click', function() {
     // 返回聊天界面，隐藏工单摘要界面
     document.getElementById('ticket-screen').classList.add('d-none');
     document.getElementById('chat-screen').classList.remove('d-none');
+});
+
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+// 添加语音按钮和事件
+const startRecordingBtn = document.getElementById('start-recording');  // 录音按钮
+const stopRecordingBtn = document.getElementById('stop-recording');    // 停止录音按钮
+const userInput = document.getElementById('user_input');               // 输入框
+
+let mediaRecorder;
+let socket;
+let audioChunks = [];
+
+startRecordingBtn.addEventListener('click', async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+
+    // 启动 WebSocket 连接
+    socket = new WebSocket('ws://localhost:8001');
+
+    socket.onopen = () => {
+        console.log('WebSocket connected for voice recognition');
+    };
+
+    // 当收到 WebSocket 传回的识别结果时，将其填入输入框
+    socket.onmessage = (event) => {
+        const recognizedText = event.data;
+        console.log('Voice recognition result:', recognizedText);
+
+        // 将识别结果填入输入框，等待用户确认
+        userInput.value = recognizedText;
+    };
+
+    mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+            audioChunks.push(event.data);
+        }
+    };
+
+    mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        audioChunks = [];
+
+        // 将音频数据发送到 WebSocket
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(audioBlob);
+        reader.onloadend = () => {
+            socket.send(reader.result);
+        };
+    };
+
+    mediaRecorder.start();
+    startRecordingBtn.disabled = true;
+    stopRecordingBtn.disabled = false;
+});
+
+stopRecordingBtn.addEventListener('click', () => {
+    mediaRecorder.stop();
+    startRecordingBtn.disabled = false;
+    stopRecordingBtn.disabled = true;
 });
 
 

@@ -80,6 +80,8 @@
                     <form id="chat-form" class="input-group">
                         {% csrf_token %}
                         <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." required>
+                        <button id="start-recording" class="btn btn-primary">开始录音</button>
+                        <button id="stop-recording" class="btn btn-secondary" disabled>停止录音</button>
                         <button class="btn btn-primary" type="submit">发送</button>
                     </form>
                 </div>
