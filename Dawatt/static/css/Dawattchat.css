@@ -1,56 +1,129 @@
-/* welcome.css */
+/* 优化整体样式 */
 body {
     font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #e0e0ff, #99ccff);
+    background-color: #f9f9f9; /* 淡灰色背景，减少视觉噪音 */
+    color: #333; /* 默认字体颜色深灰 */
 }
 
 .navbar {
     background-color: #104E8B;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 顶部导航按钮 */
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar .btn {
+    font-size: 0.9rem;
 }
 
 .sidebar {
     background-color: #ffffff;
     border-right: 1px solid #ddd;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
 }
 
 .sidebar h5 {
-    font-weight: 600;
+    font-weight: bold;
+    color: #104E8B;
 }
 
-/* 移除会话列表的圆点样式 */
+/* 美化会话列表 */
 #conversation-list {
-    list-style-type: none;  /* 去掉默认的圆点 */
-    padding-left: 0;  /* 去除左边内边距 */
-    flex-grow: 1; /* 确保会话列表占据剩余空间 */
-    overflow-y: auto; /* 启用滚动条 */
+    padding: 0;
+    margin-bottom: 20px;
 }
 
 .sidebar .conversation-item {
     cursor: pointer;
     padding: 12px;
     margin-bottom: 8px;
-    border-radius: 8px;
-    transition: background-color 0.2s ease, transform 0.2s ease;  /* 平滑过渡效果 */
-    background-color: #f9f9f9;  /* 默认背景色 */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);  /* 添加轻微阴影 */
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    background-color: #ffffff;  /* 默认背景 */
+    color: #333;
 }
 
 .sidebar .conversation-item.active {
     background-color: #eaf4ff;
     color: #104E8B;
     font-weight: bold;
-    transform: scale(1, 1.02); /* 只在Y轴方向放大 */
-    box-sizing: border-box; /* 确保不改变元素的外部尺寸 */
 }
 
 .sidebar .conversation-item:hover {
     background-color: #f0f8ff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transform: scale(1, 1.03); /* 只在Y轴方向放大 */
 }
+
+/* 美化新会话按钮 */
+#new-conversation {
+    background-color: #104E8B;
+    color: #fff;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#new-conversation:hover {
+    background-color: #083d72;
+    transform: scale(1.03);
+}
+
+/* 聊天界面优化 */
+#chat-box {
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+}
+
+#emotion-label {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.common-question {
+    margin: 5px;
+    border-radius: 20px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.common-question:hover {
+    background-color: #104E8B;
+    color: #fff;
+    transform: scale(1.03);
+}
+
+/* 按钮美化 */
+.btn-primary, .btn-danger, .btn-success, .btn-warning {
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: #104E8B;
+    border-color: #104E8B;
+}
+
+.btn-primary:hover {
+    background-color: #083d72;
+    border-color: #083d72;
+}
+
+/* 工单区域 */
+#ticket-summary {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#back-to-chat {
+    background-color: #104E8B;
+    color: #fff;
+}
+
+
+
 
 /* 调整聊天记录框，防止高度增加，启用滚动 */
 #chat-box {
@@ -76,48 +149,6 @@ body {
     flex-direction: column;
     height: 100%; /* 确保主聊天区域填充整个容器 */
 }
-
-/* 美化常见问题按钮 */
-.common-question {
-    transition: transform 0.2s ease;
-}
-
-.common-question:hover {
-    transform: scale(1.05);
-}
-
-.btn-primary {
-    background-color: #104E8B;
-    border-color: #104E8B;
-}
-
-.btn-primary:hover {
-    background-color: #083d72;
-    border-color: #083d72;
-}
-
-.btn-outline-primary {
-    border-color: #104E8B;
-    color: #104E8B;
-}
-
-.btn-outline-primary:hover {
-    background-color: #104E8B;
-    color: #ffffff;
-}
-
-#new-conversation {
-    transition: all 0.3s ease;
-    margin-top: 15px;
-    padding: 10px;
-    font-weight: bold;
-}
-
-#new-conversation:hover {
-    background-color: #104E8B;
-    transform: scale(1.05);
-}
-
 
 /*工单加载*/
 /* 加载动画的样式 */
