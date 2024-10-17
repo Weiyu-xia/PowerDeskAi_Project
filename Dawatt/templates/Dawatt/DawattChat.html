@@ -57,27 +57,33 @@
         <!-- 主聊天区域 -->
         <div id="chat-screen" class="col-10 p-4 d-flex flex-column">
             <div class="card shadow-sm p-4 bg-white d-flex flex-column flex-grow-1">
-                <!-- 情绪识别 -->
-                <div id="emotion-label" class="mb-3 border-bottom pb-3">
-                    <span class="text-muted">情绪识别结果：<strong class="text-danger">未知</strong></span>
+                <!-- 情绪识别和工单按钮在同一行 -->
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                    <!-- 情绪识别 -->
+                    <div id="emotion-label">
+                        <span class="text-muted">情绪识别结果：<strong class="text-danger">未知</strong></span>
+                    </div>
+
+                    <!-- 工单按钮，右对齐 -->
+                    <button id="generate-ticket" class="btn btn-warning ms-auto">生成工单</button>
                 </div>
 
                 <!-- 聊天记录框 -->
-                <div id="chat-box" class="border rounded p-3 overflow-auto" style="flex-grow: 1; max-height: 100%;">
+                <div id="chat-box" class="border rounded p-3 mb-3 overflow-auto" style="flex-grow: 1;">
                     <!-- 聊天记录插入位置 -->
                 </div>
 
-                <!-- 常见问题按钮 -->
-                <div class="d-flex flex-wrap p-3">
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>
-                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>
-                </div>
+{#                <!-- 常见问题按钮 -->#}
+{#                <div class="d-flex flex-wrap p-3">#}
+{#                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要咨询电费">我要咨询电费</button>#}
+{#                    <button type="button" class="btn btn-outline-primary common-question" data-value="我要停电报修">我要停电报修</button>#}
+{#                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何更改我的电费账单寄送地址？">如何更改我的电费账单寄送地址？</button>#}
+{#                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>#}
+{#                </div>#}
 
-                <div class="p-2">
-                    <!-- 输入框 -->
-                    <form id="chat-form" class="input-group">
+                <!-- 输入框 -->
+                <div class="input-area mt-auto">
+                    <form id="chat-form" class="input-group mb-3">
                         {% csrf_token %}
                         <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." required>
                         <button id="start-recording" class="btn btn-primary">开始录音</button>
@@ -85,7 +91,6 @@
                         <button class="btn btn-primary" type="submit">发送</button>
                     </form>
                 </div>
-                <button id="generate-ticket" class="btn btn-warning">生成工单</button>
             </div>
         </div>
 
