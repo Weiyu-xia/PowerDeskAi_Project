@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('chat-box').innerHTML = '';  // 清空聊天界面
 
                     // 在侧边栏新增会话条目
-                    appendConversationToList(data.conversation_id, `Chat: ${data.conversation_id}`);
+                    appendConversationToList(data.conversation_id, `New Chat`);
                 } else {
                     console.error('无法重置会话');
                 }
@@ -327,7 +327,7 @@ function appendConversationToList(conversationID, conversationName) {
     // 使用 data-id 存储会话的唯一 ID
     const li = document.createElement('li');
     li.classList.add('conversation-item', 'd-flex', 'justify-content-between', 'align-items-center');
-    li.setAttribute('data-id', "New Chat");  // 存储会话ID
+    li.setAttribute('data-id', conversationID);  // 存储会话ID
 
     // 设置会话名称和操作按钮
     li.innerHTML = `
