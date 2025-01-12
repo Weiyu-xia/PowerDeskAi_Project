@@ -9,8 +9,29 @@ let chatHistory = [];
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+function fetchMessageId(userInput, conversationId) {
+    // 调用后端获取 message_id 的接口
+    const url = `/get_message_id/?user_input=${encodeURIComponent(userInput)}&conversation_id=${conversationId}`;
+
+    return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message_id) {
+                console.log('Retrieved message_id:', data.message_id); // 调试输出
+                return data.message_id;
+            } else {
+                console.error('Failed to retrieve message_id:', data);
+                return null;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching message_id:', error);
+            return null;
+        });
+}
+
 // 表单提交事件处理
-form.addEventListener('submit', function (event) {
+form.addEventListener('submit', async function (event) {
     event.preventDefault();
     const userInput = document.getElementById('user_input').value.trim();
     if (!userInput) return;
@@ -23,6 +44,18 @@ form.addEventListener('submit', function (event) {
     appendMessage('用户', userInput);
     // 清空用户输入框
     document.getElementById('user_input').value = '';
+
+    try {
+        // 调用获取 message_id 的接口
+        const messageId = await fetchMessageId(userInput, currentConvID);
+
+        if (messageId) {
+            // 调用获取下一轮建议问题的接口
+            fetchSuggestedQuestions(messageId);
+        }
+    } catch (error) {
+        console.error('Error handling message submission:', error);
+    }
 
     // 获取大瓦特的对话内容（流式传输）
     fetch('/DawattChat/', {
@@ -86,9 +119,9 @@ form.addEventListener('submit', function (event) {
 
             // 判断情绪结果，并设置页面显示的情绪
             let emotionText = '';
-            if (emotionLabel === 1) {
+            if (emotionLabel === "1") {
                 emotionText = '正面';
-            } else if (emotionLabel === 0) {
+            } else if (emotionLabel === "0") {
                 emotionText = '负面';
             } else {
                 emotionText = '平静';  // 处理其他未知情绪标签
@@ -98,8 +131,69 @@ form.addEventListener('submit', function (event) {
             emotionDiv.innerHTML = `情绪识别结果：${emotionText}`;
         })
         .catch(error => console.error('Error:', error));
-
 });
+
+function fetchSuggestedQuestions(messageID) {
+    const url = `/messages/${messageID}/suggested?user=abc-123`;
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'success' && Array.isArray(data.data)) {
+                appendSuggestedQuestions(data.data);
+            } else {
+                console.error('Failed to fetch suggested questions:', data);
+            }
+        })
+        .catch(error => console.error('Error fetching suggested questions:', error));
+}
+
+function appendSuggestedQuestions(questions) {
+    // 调试输出建议问题列表
+    console.log('Appending suggested questions:', questions);
+
+    // 生成建议问题的按钮 HTML
+    const suggestionsHtml = questions.map(q => `
+        <button class="btn btn-sm btn-outline-secondary m-1 suggested-question">${q}</button>
+    `).join('');
+
+    // 创建包含建议问题的容器
+    const suggestionDiv = document.createElement('div');
+    suggestionDiv.classList.add('suggested-questions', 'mt-2');
+    suggestionDiv.innerHTML = `
+        <div>
+            ${suggestionsHtml}
+        </div>
+    `;
+
+    // 找到最近生成的回复气泡
+    const lastReplyContent = chatBox.querySelector('.reply-content.bg-primary'); // 大瓦特的回复气泡
+
+    if (lastReplyContent) {
+        // 将建议问题插入到回复气泡的后面
+        lastReplyContent.parentElement.insertAdjacentElement('afterend', suggestionDiv);
+    } else {
+        console.warn('No AI reply found to append suggestions.');
+    }
+
+    // 将建议问题容器添加到聊天框中
+    chatBox.appendChild(suggestionDiv);
+    chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
+
+    // 为每个按钮绑定点击事件
+    suggestionDiv.querySelectorAll('.suggested-question').forEach(button => {
+        button.addEventListener('click', function () {
+            const question = this.textContent; // 获取按钮的文本内容
+            document.getElementById('user_input').value = question; // 将问题填入输入框
+        });
+    });
+}
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -557,4 +651,47 @@ stopRecordingBtn.addEventListener('click', () => {
     stopRecordingBtn.disabled = true;
 });
 
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// 上传文件事件
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('chat-form');
+    const uploadFileButton = document.getElementById('upload-file-btn');
+    const fileInput = document.getElementById('file-input');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    // 绑定文件上传按钮事件
+    uploadFileButton.addEventListener('click', function () {
+        // 打开文件选择框
+        fileInput.click();
+    });
+
+    // 监听文件选择事件
+    fileInput.addEventListener('change', function () {
+        const file = fileInput.files[0];
+        if (file) {
+            // 上传文件
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('user', 'abc-123'); // 假设用户ID是 'abc-123'
+
+            fetch('/upload_file/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    alert('文件上传成功');
+                    console.log('上传的文件信息:', data.file);
+                } else {
+                    console.error('文件上传失败', data.error);
+                }
+            })
+            .catch(error => console.error('错误:', error));
+        }
+    });
+});
 

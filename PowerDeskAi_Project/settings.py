@@ -85,9 +85,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'powerdeskai',
-        'USER': 'czx',
-        'PASSWORD': 'Czx2002819',
-        'HOST': 'rm-bp1f61t2qtcqsc94tdo.mysql.rds.aliyuncs.com',
+        'USER': 'root',
+        'PASSWORD': 'czx2002819',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }

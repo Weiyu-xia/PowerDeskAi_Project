@@ -84,7 +84,7 @@ class MessageHistoryView(View):
         # 构建 API 请求的 URL 和参数
         api_url = "https://api.dify.ai/v1/messages"
         headers = {
-            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为你的实际 API 密钥
             'Content-Type': 'application/json'
         }
 
@@ -128,7 +128,7 @@ class ConversationsListView(View):
         # 构建 API 请求的 URL 和参数
         api_url = "https://api.dify.ai/v1/conversations"
         headers = {
-            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为你的实际 API 密钥
             'Content-Type': 'application/json'
         }
 
@@ -167,7 +167,7 @@ class DeleteConversationView(View):
         # 构建 API 请求的 URL
         api_url = f"https://api.dify.ai/v1/conversations/{conversation_id}"
         headers = {
-            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为你的实际 API 密钥
             'Content-Type': 'application/json'
         }
         body = {
@@ -206,7 +206,7 @@ class RenameConversationView(View):
         # 构建 API 请求的 URL
         api_url = f"https://api.dify.ai/v1/conversations/{conversation_id}/name"
         headers = {
-            'Authorization': 'Bearer app-UbvRHc53mtaKn740Ht5SU9aD',  # 替换为你的实际 API 密钥
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为你的实际 API 密钥
             'Content-Type': 'application/json'
         }
         body = {
@@ -243,7 +243,7 @@ class GenerateTicketView(View):
         # 准备API调用的请求数据
         api_url = "https://api.dify.ai/v1/chat-messages"
         headers = {
-            'Authorization': 'Bearer app-j3THpZ5Ve8PvOC8wzsutlPkJ',  # 替换为你的API密钥
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为你的API密钥
             'Content-Type': 'application/json'
         }
 
@@ -282,32 +282,111 @@ class GenerateTicketView(View):
 
 # 添加一个新的视图来处理情绪识别
 def emotion_analysis(request):
-    """
-    处理情绪识别API调用并返回情绪标签。
-    """
-    body_unicode = request.body.decode('utf-8')
-    body_data = json.loads(body_unicode)
-    chat_history = body_data.get('chat_history', [])
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
+        chat_history = body_data.get('chat_history', [])
+        # 获取用户输入的最后一句话
+        user_last_sentence = chat_history[-1]['content'] if chat_history else ""
 
-    # 获取用户输入的最后一句话
-    user_last_sentence = chat_history[-1]['content'] if chat_history else ""
+        # 调用情绪识别API
+        api_url = "https://api.dify.ai/v1/chat-messages"
 
-    # 调用情绪识别API
-    api_url = "http://127.0.0.1:5000/api/emotion"  # 假设情绪识别API在这个端口
-    headers = {'Content-Type': 'application/json; charset=utf-8'}
-    body = {"text": user_last_sentence}
+        headers = {
+            'Authorization': 'Bearer app-SD8NAi3M51Gw15kdDOTXcqtC',  # 替换为你的API密钥
+            'Content-Type': 'application/json'
+        }
 
-    try:
-        # 调用情绪识别API并获取结果
-        emotion_response = requests.post(api_url, json=body, headers=headers)
-        emotion_data = emotion_response.json()
-        emotion_label = emotion_data.get('emotion_label', "未知")
+        payload = {
+            "query": user_last_sentence,
+            "inputs": {},  # 如果有额外的输入变量，可以在这里添加
+            "response_mode": "blocking",  # 使用阻塞模式
+            "user": "abc-123",  # 设置用户标识
+            "conversation_id": None  # 可选，如果需要继续某个会话
+        }
 
-        # 返回情绪识别结果
-        return JsonResponse({'emotion_label': emotion_label})
+        try:
+            # 向大模型发送POST请求
+            response = requests.post(api_url, headers=headers, json=payload)
 
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({'error': str(e)})
+            # 检查请求是否成功
+            if response.status_code == 200:
+                response_data = response.json()
+                emotion_label = response_data.get("answer", 2)
+                # 返回生成的工单摘要
+                return JsonResponse({'emotion_label': emotion_label})
+            else:
+                return JsonResponse({'error': 'Failed to detect emotion', 'details': response.text},
+                                    status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+# 添加一个新的视图来处理文件上传
+class UploadFileView(View):
+
+    def post(self, request, *args, **kwargs):
+        # 获取 user_id，确保它是从请求体中获取而不是查询字符串
+        user_id = request.POST.get('user', 'abc-123')  # 假设默认用户ID是'abc-123'
+
+        # 获取上传的文件
+        uploaded_file = request.FILES.get('file')
+        if not uploaded_file:
+            return JsonResponse({'error': 'No file uploaded'}, status=400)
+
+        # 构建 API 请求的 URL
+        api_url = "https://api.dify.ai/v1/files/upload"
+        headers = {
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为你的实际 API 密钥
+        }
+
+        # 创建 multipart/form-data 请求体
+        files = {
+            'file': uploaded_file,
+            'user': user_id
+        }
+
+        try:
+            # 发送 POST 请求
+            response = requests.post(api_url, headers=headers, files=files)
+
+            # 检查响应状态
+            if response.status_code == 200:
+                return JsonResponse({'result': 'success', 'file': response.json()})
+            else:
+                return JsonResponse({'error': 'Failed to upload file', 'details': response.text},
+                                     status=response.status_code)
+
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+#获取下一轮建议问题列表
+class SuggestedQuestionsView(View):
+
+    def get(self, request, message_id, *args, **kwargs):
+        user_id = request.GET.get('user', None)
+        if not user_id:
+            return JsonResponse({'error': 'User ID is required'}, status=400)
+
+        api_url = f"https://api.dify.ai/v1/messages/{message_id}/suggested"
+        headers = {
+            'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为实际 API 密钥
+            'Content-Type': 'application/json'
+        }
+
+        try:
+            response = requests.get(api_url, headers=headers, params={'user': user_id})
+            if response.status_code == 200:
+                return JsonResponse(response.json())  # 返回建议问题列表
+            else:
+                return JsonResponse({'error': 'Failed to fetch suggested questions', 'details': response.text},
+                                    status=response.status_code)
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
 
 # 新的视图函数用于重置 conversation_id
@@ -315,3 +394,92 @@ def new_conversation(request):
     reset_conversation_id()  # 重置当前的会话 ID
     new_conv_id = generate_conversation_id()  # 生成新的会话 ID
     return JsonResponse({'message': '会话已重置', 'conversation_id': new_conv_id})
+
+def get_message_id(request):
+    """
+    获取 message_id 的接口。
+    """
+    # 从请求中提取参数
+    user_input = request.GET.get('user_input', None)
+    conversation_id = request.GET.get('conversation_id', None)
+
+    if not user_input:
+        return JsonResponse({'error': 'user_input is required'}, status=400)
+
+    # 定义 API URL
+    api_url = "https://api.dify.ai/v1/chat-messages"  # 目标 API 地址
+
+    # API Key
+    api_key = "app-EU8DZ6Erz8VvUb55jcH8sfsI"
+
+    # 设置请求头
+    headers = {
+        'Authorization': f'Bearer {api_key}',  # 替换为你的实际 API 密钥
+        'Content-Type': 'application/json'
+    }
+
+    # 构建请求体
+    request_body = {
+        "inputs": {},  # 允许传入 App 定义的各变量值
+        "query": user_input,  # 用户提问内容
+        "response_mode": "streaming",  # 使用流式模式
+        "conversation_id": conversation_id,  # 使用传入的会话ID
+        "user": "abc-123",  # 用户标识
+    }
+
+    # 发送 POST 请求
+    response = requests.post(api_url, headers=headers, json=request_body, stream=True)
+
+    if response.status_code == 200:
+        message_id = None  # 存储提取到的 message_id
+
+        # 处理流式返回数据
+        for line in response.iter_lines():
+            if line:
+                event_data = line.decode('utf-8').strip()
+                if event_data.startswith("data: "):
+                    json_data = event_data[len("data: "):]
+                    try:
+                        parsed_data = json.loads(json_data)
+                        event_type = parsed_data.get("event")
+
+                        if event_type == "message":
+                            message_id = parsed_data.get("message_id")  # 提取 message_id
+                        elif event_type == "message_end":
+                            break  # 流结束
+
+                    except json.JSONDecodeError:
+                        print("JSON 解析错误:", json_data)
+
+        if message_id:
+            return JsonResponse({'message_id': message_id}, status=200)
+        else:
+            return JsonResponse({'error': 'message_id not found in response'}, status=404)
+    else:
+        return JsonResponse({'error': 'Failed to fetch message_id', 'details': response.text}, status=response.status_code)
+
+
+def get_suggested_questions(request, message_id):
+    """
+    根据 message_id 获取建议问题列表。
+    """
+    user_id = request.GET.get('user', 'abc-123')  # 默认用户ID
+    api_url = f"https://api.dify.ai/v1/messages/{message_id}/suggested"
+
+    headers = {
+        'Authorization': 'Bearer app-EU8DZ6Erz8VvUb55jcH8sfsI',  # 替换为实际 API 密钥
+        'Content-Type': 'application/json',
+    }
+    params = {'user': user_id}
+
+    try:
+        # 调用外部 API
+        response = requests.get(api_url, headers=headers, params=params)
+        if response.status_code == 200:
+            return JsonResponse(response.json())  # 返回外部 API 的 JSON 响应
+        else:
+            return JsonResponse({'error': 'Failed to fetch suggested questions', 'details': response.text},
+                                status=response.status_code)
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
