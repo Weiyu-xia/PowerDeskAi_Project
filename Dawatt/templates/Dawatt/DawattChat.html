@@ -81,13 +81,20 @@
 {#                    <button type="button" class="btn btn-outline-primary common-question" data-value="如何提交投诉或建议？">如何提交投诉或建议？</button>#}
 {#                </div>#}
 
-                <!-- 输入框 -->
-                <div class="input-area mt-auto">
-                    <form id="chat-form" class="input-group mb-3">
+                <div class="p-2">
+                    <!-- 输入框 -->
+                    <form id="chat-form" class="input-group" enctype="multipart/form-data">
+
                         {% csrf_token %}
                         <input id="user_input" name="user_input" type="text" class="form-control" placeholder="输入你的问题..." required>
+
+                        <!-- 文件上传按钮 -->
+                        <input type="file" id="file-input" class="form-control" style="display: none;">
+                        <button type="button" id="upload-file-btn" class="btn btn-info">上传文件</button>
+                        <!-- 录音按钮 -->
                         <button id="start-recording" class="btn btn-primary">开始录音</button>
                         <button id="stop-recording" class="btn btn-secondary" disabled>停止录音</button>
+
                         <button class="btn btn-primary" type="submit">发送</button>
                     </form>
                 </div>

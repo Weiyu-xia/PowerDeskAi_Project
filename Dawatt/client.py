@@ -20,7 +20,7 @@ def generate_conversation_id():
 
     # API URL
     api_url = "https://api.dify.ai/v1/chat-messages"
-    api_key = "app-UbvRHc53mtaKn740Ht5SU9aD"
+    api_key = "app-EU8DZ6Erz8VvUb55jcH8sfsI"
 
     headers = {
         'Authorization': f'Bearer {api_key}',
@@ -82,7 +82,7 @@ def Call_Dawatt(user_input, conv_id=None):
     api_url = "https://api.dify.ai/v1/chat-messages"  # 目标 API 地址
 
     # API Key
-    api_key = "app-UbvRHc53mtaKn740Ht5SU9aD"
+    api_key = "app-EU8DZ6Erz8VvUb55jcH8sfsI"
 
     # 设置请求头
     headers = {
@@ -124,7 +124,6 @@ def Call_Dawatt(user_input, conv_id=None):
                         # 提取 conversation_id 并存储
                         if "conversation_id" in parsed_data:
                             conversation_id = parsed_data["conversation_id"]
-                            # print(f"\nNew conversation_id: {conversation_id}")
 
                         elif event_type == "message_end":
                             print("\n")
