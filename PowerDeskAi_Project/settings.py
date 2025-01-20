@@ -86,7 +86,10 @@ WSGI_APPLICATION = 'PowerDeskAi_Project.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-
+    'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
 }
 
 
