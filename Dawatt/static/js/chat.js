@@ -607,7 +607,7 @@ startRecordingBtn.addEventListener('click', async () => {
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
 
     // 启动 WebSocket 连接
-    socket = new WebSocket('ws://localhost:8001');
+    socket = new WebSocket('ws://0.0.0.0:8001');
 
     socket.onopen = () => {
         console.log('WebSocket connected for voice recognition');
